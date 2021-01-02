@@ -18,8 +18,9 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "extraWebpackConfig": "./webpack.config.js",
             "outputPath": "dist/time-report",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -66,9 +67,10 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "time-report:build"
+            "browserTarget": "time-report:build",
+            "extraWebpackConfig": "./webpack.config.js"
           },
           "configurations": {
             "production": {
@@ -127,5 +129,8 @@
       }
     }
   },
-  "defaultProject": "time-report"
+  "defaultProject": "time-report",
+  "cli": {
+    "analytics": false
+  }
 }
