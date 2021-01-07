@@ -1,4 +1,23 @@
-:host{
+:host {
     width: 100%;
     display: block;
+}
+
+.blink {
+    animation: blink-animation 2s infinite;
+    animation-timing-function: ease-in-out;
+    -webkit-animation-timing-function: ease-in-out;
+    -webkit-animation: blink-animation 2s infinite;
+}
+
+@keyframes blink-animation {
+    to {
+        opacity: 0.2;
+    }
+}
+
+@-webkit-keyframes blink-animation {
+    to {
+        opacity: 0.2;
+    }
 }

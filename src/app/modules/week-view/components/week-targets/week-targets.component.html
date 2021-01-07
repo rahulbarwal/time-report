@@ -3,10 +3,19 @@
     <div class="flex flex-col text-center w-full mb-20">
       <h1
         class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900"
+        *ngIf="monthInfo?.mottoOfMonth.length > 0; else loadingTemplate"
       >
-        {{ motto }}
+        {{ monthInfo?.mottoOfMonth }}
       </h1>
+      <ng-template #loadingTemplate>
+        <p class="blink font-medium title-font text-gray-400">
+          ... Loading ...
+        </p>
+      </ng-template>
     </div>
-    <app-targets-table></app-targets-table>
+    <app-targets-table
+      *ngIf="monthInfo"
+      [goalsData]="monthInfo.goals"
+    ></app-targets-table>
   </div>
 </section>

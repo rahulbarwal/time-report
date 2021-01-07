@@ -11,12 +11,9 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let goal of goalsList">
+      <tr *ngFor="let goal of goalsData">
         <td class="px-4 py-3 text-center">{{ goal.title }}</td>
-        <td
-          class="px-4 py-3 text-center"
-          *ngFor="let hrs of getGoalsData(goal.id)"
-        >
+        <td class="px-4 py-3 text-center" *ngFor="let hrs of goal.perDayData">
           {{ hrs }}
         </td>
       </tr>
