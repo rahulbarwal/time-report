@@ -12,6 +12,7 @@ import { GoalInfoModel } from '../../models/month-info.model';
   selector: 'app-targets-table',
   templateUrl: './targets-table.component.html',
   styleUrls: ['./targets-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TargetsTableComponent implements OnInit, OnChanges {
   @Input('goalsData') goalsData: GoalInfoModel[] = [];

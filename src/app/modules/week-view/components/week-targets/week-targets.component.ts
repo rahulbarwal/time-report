@@ -18,6 +18,8 @@ export class WeekTargetsComponent implements OnInit {
   }
 
   async getMonthGoalsDataFromDB() {
-    this.monthInfo = await this._targetDB.getMonthGoalsData();
+    this._targetDB.getMonthGoalsData().subscribe((monthInfo) => {
+      this.monthInfo = monthInfo;
+    });
   }
 }

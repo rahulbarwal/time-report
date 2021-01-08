@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { validateEventsArray } from '@angular/fire/firestore';
-import { map } from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+import { mergeMap } from 'rxjs/operators';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 import { GoalInfoModel, MonthInfoModel } from '../../models/month-info.model';
 import { DateTimeService } from '../date-time/date-time.service';
@@ -17,38 +17,53 @@ export class TargetsDbService {
     private _dateTime: DateTimeService
   ) {}
 
-  async getMonthGoalsData(weekDates?: string[]) {
-    weekDates = ['1', '3', '4'];
+  getMonthGoalsData(weekDates?: string[]) {
+    weekDates = ['1', '3', '2', '4'];
     const monthName = this._dateTime.monthName;
-    const month_db = await this._firestore
+    let monthInfo: MonthInfoModel;
+    return this._firestore
       .getCollectionRef(this.yearPath)
       .doc(monthName)
       .get()
-      .toPromise();
+      .pipe(
+        mergeMap((month_db) => {
+          monthInfo = {
+            mottoOfMonth: (month_db.data() as MonthInfoModel).mottoOfMonth,
+          };
 
-    const monthInfo: MonthInfoModel = {
-      mottoOfMonth: (month_db.data() as MonthInfoModel).mottoOfMonth,
-    };
+          return this._firestore
+            .getCollectionRef(`${this.yearPath}/${monthName}/goals`)
+            .get();
+        }),
+        mergeMap((goalsCollection) => {
+          let goals: GoalInfoModel[] = [];
+          goalsCollection.docs.forEach((doc) => {
+            const goal: GoalInfoModel = {
+              id: doc.id,
+              title: (doc.data() as GoalInfoModel).title,
+              perDayData: [],
+            };
+            const perDayData: {
+              [key: string]: number;
+            } = (doc.data() as {
+              perDayData: {
+                [key: string]: number;
+              };
+            }).perDayData;
 
-    const goalsCollection = await this._firestore
-      .getCollectionRef(`${this.yearPath}/${monthName}/goals`)
-      .get()
-      .toPromise();
-    let goals: GoalInfoModel[] = [];
-    goalsCollection.docs.forEach((doc) => {
-      const goal: GoalInfoModel = {
-        id: doc.id,
-        title: (doc.data() as GoalInfoModel).title,
-        perDayData: [],
-      };
-
-      weekDates?.forEach(async (day) => {
-        const dayData = await doc.ref.collection('per-day-data').doc(day).get();
-        goal.perDayData?.push((dayData.data() as { hours: number }).hours);
-      });
-      goals.push(goal);
-    });
-    monthInfo.goals = goals;
-    return monthInfo;
+            weekDates?.forEach(async (day) => {
+              const found = perDayData.hasOwnProperty(day);
+              if (found) {
+                goal.perDayData?.push(perDayData[day]);
+              } else {
+                goal.perDayData?.push(null);
+              }
+            });
+            goals.push(goal);
+          });
+          monthInfo.goals = goals;
+          return of(monthInfo);
+        })
+      );
   }
 }
