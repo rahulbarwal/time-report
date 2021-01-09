@@ -6,7 +6,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { GoalInfoModel } from '../../models/month-info.model';
+import { IGoalInfo } from '../../redux/state/goalsData.state';
 
 @Component({
   selector: 'app-targets-table',
@@ -14,8 +14,8 @@ import { GoalInfoModel } from '../../models/month-info.model';
   styleUrls: ['./targets-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TargetsTableComponent implements OnInit, OnChanges {
-  @Input('goalsData') goalsData: GoalInfoModel[] = [];
+export class TargetsTableComponent implements OnInit {
+  @Input('goalsData') goalsData: IGoalInfo[] | undefined = [];
 
   @Input('tableTitles') headings: string[] = [
     'Goals',
@@ -29,11 +29,4 @@ export class TargetsTableComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit(): void {}
-
-  ngOnChanges(changes: SimpleChanges) {
-    console.log(
-      '🚀 ~ file: targets-table.component.ts ~ line 32 ~ TargetsTableComponent ~ ngOnChanges ~ changes',
-      changes
-    );
-  }
 }
