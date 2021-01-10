@@ -17,7 +17,7 @@ export class DateTimeService {
     return new Date(new Date(today).setDate(today.getDate() - days));
   }
 
-  getValidWeekDaysList(): string[] {
+  getValidWeekDaysList(): (number | null)[] {
     const sundayDate = this.lastSunday.getDate();
     const getDaysInMonth = (month: number, year: number) =>
       new Date(year, month, 0).getDate();
@@ -26,18 +26,22 @@ export class DateTimeService {
       this.today.getFullYear()
     );
     return [
-      `${sundayDate}`,
-      sundayDate + 1 <= maxDate ? `${sundayDate + 1}` : '',
-      sundayDate + 2 <= maxDate ? `${sundayDate + 2}` : '',
-      sundayDate + 3 <= maxDate ? `${sundayDate + 3}` : '',
-      sundayDate + 4 <= maxDate ? `${sundayDate + 4}` : '',
-      sundayDate + 5 <= maxDate ? `${sundayDate + 5}` : '',
-      sundayDate + 6 <= maxDate ? `${sundayDate + 6}` : '',
+      sundayDate,
+      sundayDate + 1 <= maxDate ? sundayDate + 1 : null,
+      sundayDate + 2 <= maxDate ? sundayDate + 2 : null,
+      sundayDate + 3 <= maxDate ? sundayDate + 3 : null,
+      sundayDate + 4 <= maxDate ? sundayDate + 4 : null,
+      sundayDate + 5 <= maxDate ? sundayDate + 5 : null,
+      sundayDate + 6 <= maxDate ? sundayDate + 6 : null,
     ];
   }
 
   get todayWeekDayName() {
     return DateTimeService.getWeekDayNameFromDate(this.today);
+  }
+
+  get currentYear() {
+    return this.today.getFullYear();
   }
 
   get currentMonthName() {

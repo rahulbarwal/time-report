@@ -21,15 +21,17 @@ export class TargetsTableComponent {
   @Output() setHoursForGoal = new EventEmitter<{
     goalID: string;
     hrs: number;
+    dayIndex: number;
   }>();
 
   allowedHours = [2, 3, 4, 5];
 
   constructor() {}
 
-  hoursClick(goalID: string, hrs: number) {
+  hoursClick(goalID: string, hrs: number, dayIndex: number) {
     this.setHoursForGoal.emit({
       goalID,
+      dayIndex,
       hrs: hrs,
     });
   }

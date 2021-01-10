@@ -7,8 +7,7 @@ import { DateTimeService } from '../date-time/date-time.service';
 
 @Injectable()
 export class TargetsDbService {
-  get yearPath() {
-    const year = this._dateTime.today.getFullYear();
+  getYearPath(year: number) {
     return `targets-${year}`;
   }
 
@@ -17,12 +16,21 @@ export class TargetsDbService {
     private _dateTime: DateTimeService
   ) {}
 
-  getMonthGoalsData(weekDates: string[]) {
-    const monthName = this._dateTime.currentMonthName;
+  getMonthGoalsData(
+    year?: number,
+    month?: string,
+    weekDates?: (number | null)[]
+  ) {
+    month = month || this._dateTime.currentMonthName;
+    year = year || this._dateTime.today.getFullYear();
+    weekDates = weekDates || this._dateTime.getValidWeekDaysList();
+
+    const yearPath = this.getYearPath(year);
+
     let monthInfo: IMonthInfo;
     return this._firestore
-      .getCollectionRef(this.yearPath)
-      .doc(monthName)
+      .getCollectionRef(yearPath)
+      .doc(month)
       .get()
       .pipe(
         mergeMap((month_db) => {
@@ -33,7 +41,7 @@ export class TargetsDbService {
             };
 
             return this._firestore
-              .getCollectionRef(`${this.yearPath}/${monthName}/goals`)
+              .getCollectionRef(`${yearPath}/${month}/goals`)
               .get();
           } else {
             return throwError('EmptyMonth');
@@ -56,11 +64,13 @@ export class TargetsDbService {
             }).perDayData;
 
             weekDates?.forEach(async (day) => {
-              const found = perDayData.hasOwnProperty(day);
-              if (found) {
-                goal.perDayData?.push(perDayData[day]);
-              } else {
-                goal.perDayData?.push(null);
+              if (day !== null) {
+                const found = perDayData.hasOwnProperty(day);
+                if (found) {
+                  goal.perDayData?.push(perDayData[day]);
+                } else {
+                  goal.perDayData?.push(null);
+                }
               }
             });
             goals.push(goal);
@@ -69,5 +79,17 @@ export class TargetsDbService {
           return of(monthInfo);
         })
       );
+  }
+
+  updateGoalHours(goalID: string, day: number, hrs: number) {
+    const monthName = this._dateTime.currentMonthName;
+    const year = this._dateTime.currentYear;
+
+    const objToUpdate: { [key: string]: number } = {};
+    objToUpdate[`perDayData.${day}`] = hrs;
+    return this._firestore
+      .getCollectionRef(`${this.getYearPath(year)}/${monthName}/goals`)
+      .doc(goalID)
+      .update(objToUpdate);
   }
 }

@@ -16,18 +16,22 @@ export const goalsDataReducer = createReducer(
   on(loadMonthInfoToFromDBAction, setLoading),
   on(addMonthInfoToStoreAction, addMonthInfoReducer),
   on(emptyMonthInfoAction, addEmptyMonthInfoToStore)
-  // on(getMonthInfoToStoreAction, null),
-  // on(getMonthGoalsToStoreAction, null),
-  // on(getMonthGoalsPerDayDayaToStoreAction, null)
 );
 
 function setLoading(
   store: IGoalDataState,
-  { loading }: { loading: boolean }
+  {
+    loading,
+  }: {
+    year?: number;
+    month?: string;
+    weekDates?: (number | null)[];
+    loading?: boolean;
+  }
 ): IGoalDataState {
   return {
     ...store,
-    dataLoading: loading,
+    dataLoading: loading || false,
   };
 }
 
