@@ -22,18 +22,14 @@ export class GoalsDataEffects {
     ofType(loadMonthInfoToFromDBAction),
     exhaustMap((action) =>
       this._targetsDB.getMonthGoalsData(action.weekDates).pipe(
-        concatMap((info) => {
-          console.log(
-            '🚀 ~ file: goalsData.effects.ts ~ line 24 ~ GoalsDataEffects ~ concatMap ~ info',
-            info
-          );
-          return of(
+        concatMap((info) =>
+          of(
             addMonthInfoToStoreAction({
               monthName: action.monthName,
               data: info,
             })
-          );
-        }),
+          )
+        ),
         catchError((e) => {
           if (e === 'EmptyMonth') {
             return of(emptyMonthInfoAction({ monthName: action.monthName }));

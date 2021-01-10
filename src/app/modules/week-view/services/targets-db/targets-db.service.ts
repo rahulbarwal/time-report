@@ -40,11 +40,6 @@ export class TargetsDbService {
           }
         }),
         mergeMap((goalsCollection) => {
-          console.log(
-            '🚀 ~ file: targets-db.service.ts ~ line 44 ~ TargetsDbService ~ mergeMap ~ goalsCollection',
-            goalsCollection
-          );
-
           let goals: IGoalInfo[] = [];
           goalsCollection.docs.forEach((doc) => {
             const goal: IGoalInfo = {

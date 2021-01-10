@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
+  Output,
 } from '@angular/core';
 import { IGoalInfo } from '../../redux/state/goalsData.state';
 
@@ -14,12 +13,24 @@ import { IGoalInfo } from '../../redux/state/goalsData.state';
   styleUrls: ['./targets-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TargetsTableComponent implements OnInit {
+export class TargetsTableComponent {
   @Input() goalsData!: IGoalInfo[];
-
   @Input() headings!: string[];
+  @Input() currentDayIndex!: number;
+
+  @Output() setHoursForGoal = new EventEmitter<{
+    goalID: string;
+    hrs: number;
+  }>();
+
+  allowedHours = [2, 3, 4, 5];
 
   constructor() {}
 
-  ngOnInit(): void {}
+  hoursClick(goalID: string, hrs: string) {
+    this.setHoursForGoal.emit({
+      goalID,
+      hrs: parseInt(hrs),
+    });
+  }
 }

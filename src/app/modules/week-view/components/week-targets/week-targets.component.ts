@@ -1,8 +1,7 @@
-import { stringify } from '@angular/compiler/src/util';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { loadMonthInfoToFromDBAction } from '../../redux/actions/goalsData.action';
 import {
   getDataLoadingSelector,
@@ -11,7 +10,6 @@ import {
   IMonthInfo,
 } from '../../redux/state/goalsData.state';
 import { DateTimeService } from '../../services/date-time/date-time.service';
-import { TargetsDbService } from '../../services/targets-db/targets-db.service';
 
 @Component({
   selector: 'app-week-targets',
@@ -24,6 +22,7 @@ export class WeekTargetsComponent implements OnInit {
   currentMonth!: string;
   weekTitles!: string[];
   weekDates!: string[];
+  currentDayIndex!: number;
 
   constructor(
     private store: Store<IGoalDataState>,
@@ -32,6 +31,9 @@ export class WeekTargetsComponent implements OnInit {
     this.currentMonth = this._dateService.currentMonthName;
     this.weekDates = this._dateService.getValidWeekDaysList();
     this.weekTitles = this.initializeWeekTitles();
+    this.currentDayIndex = this.weekDates.findIndex(
+      (date) => date === this._dateService.today.getDate().toString()
+    );
 
     this.store.dispatch(
       loadMonthInfoToFromDBAction({
@@ -59,5 +61,9 @@ export class WeekTargetsComponent implements OnInit {
       })
     );
     this.loading$ = this.store.select(getDataLoadingSelector);
+  }
+
+  setHoursForGoal(event: { goalID: string; hrs: number }) {
+    console.log('🚀 ~ setHoursForGoal ~ goalID', event.goalID, event.hrs);
   }
 }

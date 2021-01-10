@@ -13,8 +13,26 @@
     <tbody>
       <tr *ngFor="let goal of goalsData">
         <td class="px-4 py-3 text-center">{{ goal.title }}</td>
-        <td class="px-4 py-3 text-center" *ngFor="let hrs of goal.perDayData">
-          {{ hrs }}
+        <td
+          class="px-4 py-3 text-center"
+          *ngFor="let hrs of goal.perDayData; let index = index"
+        >
+          <div
+            *ngIf="index === currentDayIndex; else displayHoursTemplate"
+            class="flex"
+          >
+            <span
+              *ngFor="let hr of allowedHours"
+              class="flex h-8 items-center justify-center rounded-full text-center text-white w-8 mr-1 cursor-pointer shadow"
+              [ngClass]="hrs === hr ? 'bg-indigo-500' : 'bg-gray-300'"
+              (click)="hoursClick(goal.id, hr)"
+            >
+              {{ hr }}
+            </span>
+          </div>
+          <ng-template #displayHoursTemplate>
+            {{ hrs }}
+          </ng-template>
         </td>
       </tr>
     </tbody>
