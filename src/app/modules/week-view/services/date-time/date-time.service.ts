@@ -7,6 +7,8 @@ export class DateTimeService {
 
   constructor() {
     this.today = new Date();
+    this.today = new Date(new Date(this.today).setDate(this.today.getDate()));
+
     this.lastSunday = this.initializeLastSunday(this.today);
   }
 
@@ -15,7 +17,34 @@ export class DateTimeService {
     return new Date(new Date(today).setDate(today.getDate() - days));
   }
 
-  get weekDayName() {
+  getValidWeekDaysList(): string[] {
+    const sundayDate = this.lastSunday.getDate();
+    const getDaysInMonth = (month: number, year: number) =>
+      new Date(year, month, 0).getDate();
+    const maxDate = getDaysInMonth(
+      this.today.getMonth(),
+      this.today.getFullYear()
+    );
+    return [
+      `${sundayDate}`,
+      sundayDate + 1 <= maxDate ? `${sundayDate + 1}` : '',
+      sundayDate + 2 <= maxDate ? `${sundayDate + 2}` : '',
+      sundayDate + 3 <= maxDate ? `${sundayDate + 3}` : '',
+      sundayDate + 4 <= maxDate ? `${sundayDate + 4}` : '',
+      sundayDate + 5 <= maxDate ? `${sundayDate + 5}` : '',
+      sundayDate + 6 <= maxDate ? `${sundayDate + 6}` : '',
+    ];
+  }
+
+  get todayWeekDayName() {
+    return DateTimeService.getWeekDayNameFromDate(this.today);
+  }
+
+  get currentMonthName() {
+    return DateTimeService.getMonthNameDate(this.today);
+  }
+
+  static getWeekDayNameFromDate(date: Date): string {
     var days = [
       'Sunday',
       'Monday',
@@ -25,10 +54,10 @@ export class DateTimeService {
       'Friday',
       'Saturday',
     ];
-    return days[this.today.getDay()];
+    return days[date.getDay()];
   }
 
-  get monthName() {
+  static getMonthNameDate(date: Date): string {
     var months = [
       'January',
       'February',
@@ -43,6 +72,6 @@ export class DateTimeService {
       'November',
       'December',
     ];
-    return months[this.today.getMonth()];
+    return months[date.getMonth()];
   }
 }

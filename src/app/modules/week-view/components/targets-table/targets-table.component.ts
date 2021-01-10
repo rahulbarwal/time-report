@@ -15,16 +15,9 @@ import { IGoalInfo } from '../../redux/state/goalsData.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TargetsTableComponent implements OnInit {
-  @Input('goalsData') goalsData: IGoalInfo[] | undefined = [];
+  @Input() goalsData!: IGoalInfo[];
 
-  @Input('tableTitles') headings: string[] = [
-    'Goals',
-    '4th Jan',
-    '5th Jan',
-    '6th Jan',
-    '7th Jan',
-    '8th Jan',
-  ];
+  @Input() headings!: string[];
 
   constructor() {}
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+import { EMPTY, throwError } from 'rxjs';
 import { of } from 'rxjs/internal/observable/of';
-import { mergeMap } from 'rxjs/operators';
+import { isEmpty, mergeMap } from 'rxjs/operators';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 import { IMonthInfo, IGoalInfo } from '../../redux/state/goalsData.state';
 import { DateTimeService } from '../date-time/date-time.service';
@@ -17,9 +18,8 @@ export class TargetsDbService {
     private _dateTime: DateTimeService
   ) {}
 
-  getMonthGoalsData(weekDates?: string[]) {
-    weekDates = ['1', '3', '2', '4'];
-    const monthName = this._dateTime.monthName;
+  getMonthGoalsData(weekDates: string[]) {
+    const monthName = this._dateTime.currentMonthName;
     let monthInfo: IMonthInfo;
     return this._firestore
       .getCollectionRef(this.yearPath)
@@ -27,15 +27,24 @@ export class TargetsDbService {
       .get()
       .pipe(
         mergeMap((month_db) => {
-          monthInfo = {
-            mottoOfMonth: (month_db.data() as IMonthInfo).mottoOfMonth,
-          };
+          if (month_db.exists) {
+            monthInfo = {
+              mottoOfMonth: (month_db.data() as IMonthInfo).mottoOfMonth,
+            };
 
-          return this._firestore
-            .getCollectionRef(`${this.yearPath}/${monthName}/goals`)
-            .get();
+            return this._firestore
+              .getCollectionRef(`${this.yearPath}/${monthName}/goals`)
+              .get();
+          } else {
+            return throwError('EmptyMonth');
+          }
         }),
         mergeMap((goalsCollection) => {
+          console.log(
+            '🚀 ~ file: targets-db.service.ts ~ line 44 ~ TargetsDbService ~ mergeMap ~ goalsCollection',
+            goalsCollection
+          );
+
           let goals: IGoalInfo[] = [];
           goalsCollection.docs.forEach((doc) => {
             const goal: IGoalInfo = {
