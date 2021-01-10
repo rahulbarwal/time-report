@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { EMPTY, throwError } from 'rxjs';
-import { of } from 'rxjs/internal/observable/of';
+import { of, throwError } from 'rxjs';
 import { catchError, concatMap, exhaustMap } from 'rxjs/operators';
 import { TargetsDbService } from '../../services/targets-db/targets-db.service';
 import {

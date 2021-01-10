@@ -11,10 +11,8 @@ interface IGoalInfo {
 interface IMonthInfo {
   mottoOfMonth?: string;
   monthTitle?: string;
-  goals?: IGoalInfo[];
+  goals: IGoalInfo[];
 }
-
-export { IGoalInfo, IMonthInfo };
 
 interface IGoalDataState extends IAppState {
   months: Map<string, IMonthInfo | null>;
@@ -35,6 +33,8 @@ const getDataLoadingSelector = createSelector(
 );
 
 export {
+  IGoalInfo,
+  IMonthInfo,
   IGoalDataState,
   IAppState,
   getMonthsMapSelector,

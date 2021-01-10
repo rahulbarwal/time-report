@@ -15,24 +15,8 @@ const emptyMonthInfoAction = createAction(
   props<{ monthName: string }>()
 );
 
-const getMonthInfoToStoreAction = createAction(
-  '[MonthInfo] Get particular month data',
-  props<{ mottoOfMonth: string }>()
-);
-const getMonthGoalsToStoreAction = createAction(
-  '[MonthInfo->Goals] Get particular month data',
-  props<{ monthName: string; data: IMonthInfo }>()
-);
-const getMonthGoalsPerDayDayaToStoreAction = createAction(
-  '[MonthInfo->Goals->Per day data] Get particular month data',
-  props<{ monthName: string; data: IMonthInfo }>()
-);
-
 export {
   loadMonthInfoToFromDBAction,
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
-  getMonthInfoToStoreAction,
-  getMonthGoalsToStoreAction,
-  getMonthGoalsPerDayDayaToStoreAction,
 };

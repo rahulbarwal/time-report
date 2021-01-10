@@ -27,10 +27,10 @@ export class TargetsTableComponent {
 
   constructor() {}
 
-  hoursClick(goalID: string, hrs: string) {
+  hoursClick(goalID: string, hrs: number) {
     this.setHoursForGoal.emit({
       goalID,
-      hrs: parseInt(hrs),
+      hrs: hrs,
     });
   }
 }

@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, throwError } from 'rxjs';
-import { of } from 'rxjs/internal/observable/of';
-import { isEmpty, mergeMap } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
-import { IMonthInfo, IGoalInfo } from '../../redux/state/goalsData.state';
+import { IGoalInfo, IMonthInfo } from '../../redux/state/goalsData.state';
 import { DateTimeService } from '../date-time/date-time.service';
 
 @Injectable()
@@ -30,6 +29,7 @@ export class TargetsDbService {
           if (month_db.exists) {
             monthInfo = {
               mottoOfMonth: (month_db.data() as IMonthInfo).mottoOfMonth,
+              goals: [],
             };
 
             return this._firestore
