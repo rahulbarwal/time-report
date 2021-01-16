@@ -39,6 +39,40 @@ export class TargetsTableComponent {
 
   constructor(private _changeDetector: ChangeDetectorRef) {}
 
+  getHrColorClass(hr?: number, prevDayHr?: number) {
+    console.log('🚀 ~ hr', hr, prevDayHr);
+    if (hr && hr > 0) {
+      if (!prevDayHr) {
+        return '';
+      }
+      const diff = hr - prevDayHr;
+      if (diff > 0) {
+        switch (diff) {
+          case 1:
+            return 'text-green-300';
+          case 2:
+            return 'text-green-400';
+          case 3:
+            return 'text-green-500';
+          case 4:
+            return 'text-green-600';
+        }
+      } else {
+        switch (Math.abs(diff)) {
+          case 1:
+            return 'text-yellow-400';
+          case 2:
+            return 'text-red-400';
+          case 3:
+            return 'text-red-500';
+          case 4:
+            return 'text-red-600';
+        }
+      }
+    }
+    return '';
+  }
+
   hoursClick(goalID: string, hrs: number, dayIndex: number, hrIndex: number) {
     this.indexForLoadingSpinner = { hrIndex, goalID };
     this._changeDetector.detectChanges();
