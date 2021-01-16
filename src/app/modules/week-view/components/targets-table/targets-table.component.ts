@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -14,7 +15,15 @@ import { IGoalInfo } from '../../redux/state/goalsData.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TargetsTableComponent {
-  @Input() goalsData!: IGoalInfo[];
+  private _goalsData!: IGoalInfo[];
+  @Input() set goalsData(val: IGoalInfo[]) {
+    this._goalsData = val;
+    this.indexForLoadingSpinner = null;
+  }
+  get goalsData() {
+    return this._goalsData;
+  }
+
   @Input() headings!: string[];
   @Input() currentDayIndex!: number;
 
@@ -24,11 +33,15 @@ export class TargetsTableComponent {
     dayIndex: number;
   }>();
 
-  allowedHours = [2, 3, 4, 5];
+  allowedHours = [1, 2, 3, 4];
 
-  constructor() {}
+  indexForLoadingSpinner: { hrIndex: number; goalID: string } | null = null;
 
-  hoursClick(goalID: string, hrs: number, dayIndex: number) {
+  constructor(private _changeDetector: ChangeDetectorRef) {}
+
+  hoursClick(goalID: string, hrs: number, dayIndex: number, hrIndex: number) {
+    this.indexForLoadingSpinner = { hrIndex, goalID };
+    this._changeDetector.detectChanges();
     this.setHoursForGoal.emit({
       goalID,
       dayIndex,
