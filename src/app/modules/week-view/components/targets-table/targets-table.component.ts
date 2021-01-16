@@ -33,7 +33,7 @@ export class TargetsTableComponent {
     dayIndex: number;
   }>();
 
-  allowedHours = [1, 2, 3, 4];
+  allowedHours = [0, 1, 2, 3, 4];
 
   indexForLoadingSpinner: { hrIndex: number; goalID: string } | null = null;
 
