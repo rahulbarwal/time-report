@@ -5,7 +5,7 @@ const GOALS_DATA_FEATURE_KEY = 'goalsData';
 interface IGoalInfo {
   id: string;
   title: string;
-  perDayData?: (number | null | undefined)[];
+  perDayData: (number | null | undefined)[];
 }
 
 interface IMonthInfo {

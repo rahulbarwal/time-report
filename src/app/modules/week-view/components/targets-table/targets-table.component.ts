@@ -40,7 +40,6 @@ export class TargetsTableComponent {
   constructor(private _changeDetector: ChangeDetectorRef) {}
 
   getHrColorClass(hr?: number, prevDayHr?: number) {
-    console.log('🚀 ~ hr', hr, prevDayHr);
     if (hr && hr > 0) {
       if (!prevDayHr) {
         return '';

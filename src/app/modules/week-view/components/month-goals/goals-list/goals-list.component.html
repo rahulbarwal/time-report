@@ -1,0 +1,42 @@
+<div class="leading-7 text-xl font-semibold text-gray-600">Goals</div>
+
+<div class="w-full my-10 flex">
+  <input
+    autocomplete="off"
+    class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+    placeholder="Type a goal for this month... "
+    [formControl]="newGoal"
+  />
+  <button
+    [disabled]="!newGoal.value?.length"
+    class="btn-primary disabled:opacity-50"
+    (click)="addNewGoal()"
+  >
+    Add
+  </button>
+</div>
+
+<ng-container *ngIf="!goalsFormArray.value?.length; else GoalsListTemplate">
+  <div class="text-center font-semibold">No goals added 😢</div>
+</ng-container>
+<ng-template #GoalsListTemplate>
+  <div class="flex justify-between">
+    <span class="leading-7 text-lg font-semibold text-gray-600"
+      >Drafted goals</span
+    >
+    <span class="rounded px-2 py-1 bg-red-500 text-white">Clear All</span>
+  </div>
+
+  <article
+    class="border border-gray-200 px-5 py-3 my-2 rounded flex justify-between"
+    *ngFor="let goal of goalsFormArray.value; let index = index"
+  >
+    {{ goal }}
+    <span
+      class="text-red-300 font-semibold cursor-pointer"
+      (click)="deleteGoal(index)"
+    >
+      Del
+    </span>
+  </article>
+</ng-template>

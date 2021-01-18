@@ -15,11 +15,19 @@ import { StoreModule } from '@ngrx/store';
 import { goalsDataReducer } from './redux/reducer/goalsData.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { GoalsDataEffects } from './redux/effects/goalsData.effects';
-
+import { MonthGoalsComponent } from './components/month-goals/month-goals.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { GoalsListComponent } from './components/month-goals/goals-list/goals-list.component';
 @NgModule({
-  declarations: [WeekTargetsComponent, TargetsTableComponent],
+  declarations: [
+    WeekTargetsComponent,
+    TargetsTableComponent,
+    MonthGoalsComponent,
+    GoalsListComponent,
+  ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     WeekViewRoutingModule,
     AngularFirestoreModule,
     StoreModule.forFeature<IGoalDataState>(

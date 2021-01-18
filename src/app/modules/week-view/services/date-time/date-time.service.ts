@@ -7,7 +7,6 @@ export class DateTimeService {
 
   constructor() {
     this.today = new Date();
-    this.today = new Date(new Date(this.today).setDate(this.today.getDate()));
 
     this.lastSunday = this.initializeLastSunday(this.today);
   }
