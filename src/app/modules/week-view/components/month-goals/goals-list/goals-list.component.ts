@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormControl } from '@angular/forms';
 
 @Component({
@@ -17,6 +12,13 @@ export class GoalsListComponent {
   newGoal = new FormControl('');
 
   constructor(private _formBuilder: FormBuilder) {}
+
+  onKeyPress(e: KeyboardEvent) {
+    if (e.code === 'Enter') {
+      this.addNewGoal();
+    }
+  }
+
   addNewGoal() {
     this.goalsFormArray.push(
       this._formBuilder.control(this.newGoal.value || '')
@@ -26,5 +28,9 @@ export class GoalsListComponent {
 
   deleteGoal(index: number) {
     this.goalsFormArray.removeAt(index);
+  }
+
+  clearAllGoals() {
+    this.goalsFormArray.clear();
   }
 }

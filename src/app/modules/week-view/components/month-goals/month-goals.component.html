@@ -26,13 +26,27 @@
         </div>
       </div>
     </div>
-    <div class="p-2 w-full flex justify-center">
+    <div class="p-2 w-full flex flex-col justify-center">
       <button
         class="btn-primary mx-auto disabled:opacity-50"
         [disabled]="monthForm.invalid"
+        (click)="onSubmit()"
       >
         Submit
       </button>
+      <span
+        *ngIf="monthForm.dirty && goalsEmptyError"
+        class="text-sm text-red-400 text-center"
+      >
+        Add at least one goal
+      </span>
+
+      <span
+        *ngIf="saveError$ | async as error"
+        class="text-sm text-red-400 text-center"
+      >
+        {{ error }}
+      </span>
     </div>
   </div>
 </section>

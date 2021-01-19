@@ -12,4 +12,8 @@ export class FirestoreService {
     }
     return this._firestore.collection(path);
   }
+
+  get writeBatch() {
+    return this._firestore.firestore.batch();
+  }
 }

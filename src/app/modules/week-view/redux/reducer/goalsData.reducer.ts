@@ -3,19 +3,26 @@ import {
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
   loadMonthInfoToFromDBAction,
+  saveMonthInfoToDBAction,
+  saveMonthInfoToDBFailAction,
+  saveMonthInfoToDBSuccessAction,
 } from '../actions/goalsData.action';
 import { IGoalDataState, IMonthInfo } from '../state/goalsData.state';
 
 const initialState: IGoalDataState = {
   months: new Map(),
   dataLoading: false,
+  saveError: null,
+  dataSaved: null,
 };
 
 export const goalsDataReducer = createReducer(
   initialState,
   on(loadMonthInfoToFromDBAction, setLoading),
   on(addMonthInfoToStoreAction, addMonthInfoReducer),
-  on(emptyMonthInfoAction, addEmptyMonthInfoToStore)
+  on(emptyMonthInfoAction, addEmptyMonthInfoToStore),
+  on(saveMonthInfoToDBSuccessAction, monthInfoSaveSuccess),
+  on(saveMonthInfoToDBFailAction, monthInfoSaveFail)
 );
 
 function setLoading(
@@ -62,5 +69,21 @@ function addEmptyMonthInfoToStore(
     ...store,
     months: monthsMap,
     dataLoading: false,
+  };
+}
+
+function monthInfoSaveFail(store: IGoalDataState): IGoalDataState {
+  return {
+    ...store,
+    saveError: 'Failed to save month info',
+    dataSaved: false,
+  };
+}
+
+function monthInfoSaveSuccess(store: IGoalDataState): IGoalDataState {
+  return {
+    ...store,
+    saveError: '',
+    dataSaved: true,
   };
 }

@@ -17,6 +17,8 @@ interface IMonthInfo {
 interface IGoalDataState extends IAppState {
   months: Map<string, IMonthInfo | null>;
   dataLoading: boolean;
+  saveError: string | null;
+  dataSaved: boolean | null;
 }
 
 const getGoalDataSelector = createFeatureSelector<IGoalDataState>(
@@ -27,9 +29,19 @@ const getMonthsMapSelector = createSelector(
   getGoalDataSelector,
   (state) => state.months
 );
+
 const getDataLoadingSelector = createSelector(
   getGoalDataSelector,
   (state) => state.dataLoading
+);
+
+const getSaveErrorSelector = createSelector(
+  getGoalDataSelector,
+  (state) => state.saveError
+);
+const getSavedSelector = createSelector(
+  getGoalDataSelector,
+  (state) => state.dataSaved
 );
 
 export {
@@ -40,4 +52,6 @@ export {
   getMonthsMapSelector,
   getDataLoadingSelector,
   GOALS_DATA_FEATURE_KEY,
+  getSaveErrorSelector,
+  getSavedSelector,
 };

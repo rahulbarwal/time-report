@@ -26,9 +26,25 @@ const updateGoalHrsForTodayAction = createAction(
   props<{ goalID: string; day: number; hrs: number }>()
 );
 
+const saveMonthInfoToDBAction = createAction(
+  '[MonthInfo] Save to DB',
+  props<{ motto: string; goals: string[] }>()
+);
+
+const saveMonthInfoToDBFailAction = createAction(
+  '[MonthInfo] Save to DB failed'
+);
+
+const saveMonthInfoToDBSuccessAction = createAction(
+  '[MonthInfo] Save to DB successfull'
+);
+
 export {
   loadMonthInfoToFromDBAction,
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
   updateGoalHrsForTodayAction,
+  saveMonthInfoToDBAction,
+  saveMonthInfoToDBFailAction,
+  saveMonthInfoToDBSuccessAction,
 };

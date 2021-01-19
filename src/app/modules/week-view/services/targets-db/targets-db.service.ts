@@ -92,4 +92,29 @@ export class TargetsDbService {
       .doc(goalID)
       .update(objToUpdate);
   }
+
+  //#region Save Month data
+  saveMonthGoals(motto: string, goals: string[]) {
+    try {
+      const monthName = this._dateTime.currentMonthName;
+      const year = this._dateTime.currentYear;
+      const targetRef = this._firestore
+        .getCollectionRef(`${this.getYearPath(year)}`)
+        .doc(monthName).ref;
+      const batch = this._firestore.writeBatch;
+      batch.set(targetRef, { mottoOfMonth: motto });
+
+      goals.forEach((goal) => {
+        targetRef.collection('goals').add({
+          title: goal,
+          perDayData: [],
+        });
+      });
+      batch.commit();
+      return of(true);
+    } catch (error) {
+      return throwError('SaveFail');
+    }
+  }
+  //#endregion
 }

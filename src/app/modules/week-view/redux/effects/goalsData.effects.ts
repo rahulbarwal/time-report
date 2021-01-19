@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { from, of, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, concatMap, switchMap } from 'rxjs/operators';
 import { TargetsDbService } from '../../services/targets-db/targets-db.service';
 import {
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
   loadMonthInfoToFromDBAction,
-  updateGoalHrsForTodayAction,
+  saveMonthInfoToDBAction,
+  saveMonthInfoToDBFailAction,
+  saveMonthInfoToDBSuccessAction,
 } from '../actions/goalsData.action';
 
 @Injectable()
@@ -41,6 +43,22 @@ export class GoalsDataEffects {
             return throwError(e);
           })
         )
+    )
+  );
+
+  @Effect()
+  saveMonthToDB$ = this._actions$.pipe(
+    ofType(saveMonthInfoToDBAction),
+    switchMap((action) =>
+      this._targetsDB.saveMonthGoals(action.motto, action.goals).pipe(
+        concatMap((_) => of(saveMonthInfoToDBSuccessAction())),
+        catchError((e) => {
+          if (e === 'SaveFail') {
+            return of(saveMonthInfoToDBFailAction());
+          }
+          return throwError(e);
+        })
+      )
     )
   );
 }
