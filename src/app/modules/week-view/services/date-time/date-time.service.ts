@@ -2,30 +2,20 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class DateTimeService {
-  today: Date;
-  lastSunday: Date;
+  static today = new Date();
+  static lastSunday = new Date(
+    new Date(DateTimeService.today).setDate(
+      DateTimeService.today.getDate() - DateTimeService.today.getDay()
+    )
+  );
 
-  constructor() {
-    this.today = new Date();
-    // this.today = new Date(
-    //   new Date(this.today).setDate(this.today.getDate() + 16)
-    // );
-
-    this.lastSunday = this.initializeLastSunday(this.today);
-  }
-
-  initializeLastSunday(today: Date): Date {
-    const days = today.getDay();
-    return new Date(new Date(today).setDate(today.getDate() - days));
-  }
-
-  getValidWeekDaysList(): (number | null)[] {
-    const sundayDate = this.lastSunday.getDate();
+  static getValidWeekDaysList(sundayDate: number): (number | null)[] {
+    sundayDate = sundayDate;
     const getDaysInMonth = (month: number, year: number) =>
       new Date(year, month, 0).getDate();
     const maxDate = getDaysInMonth(
-      this.today.getMonth(),
-      this.today.getFullYear()
+      DateTimeService.today.getMonth(),
+      DateTimeService.today.getFullYear()
     );
     return [
       sundayDate,
@@ -38,16 +28,16 @@ export class DateTimeService {
     ];
   }
 
-  get todayWeekDayName() {
-    return DateTimeService.getWeekDayNameFromDate(this.today);
+  static get todayWeekDayName() {
+    return DateTimeService.getWeekDayNameFromDate(DateTimeService.today);
   }
 
-  get currentYear() {
-    return this.today.getFullYear();
+  static get currentYear() {
+    return DateTimeService.today.getFullYear();
   }
 
-  get currentMonthName() {
-    return DateTimeService.getMonthNameDate(this.today);
+  static get currentMonthName() {
+    return DateTimeService.getMonthNameDate(DateTimeService.today);
   }
 
   static getWeekDayNameFromDate(date: Date): string {

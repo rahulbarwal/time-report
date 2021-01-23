@@ -1,11 +1,11 @@
-import { createReducer, on, Store } from '@ngrx/store';
+import { createReducer, on } from '@ngrx/store';
 import {
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
   loadMonthInfoToFromDBAction,
-  saveMonthInfoToDBAction,
   saveMonthInfoToDBFailAction,
   saveMonthInfoToDBSuccessAction,
+  updateCurrentWeekStartDateAction,
 } from '../actions/goalsData.action';
 import { IGoalDataState, IMonthInfo } from '../state/goalsData.state';
 
@@ -14,10 +14,12 @@ const initialState: IGoalDataState = {
   dataLoading: false,
   saveError: null,
   dataSaved: null,
+  currentWeekSundayDate: null,
 };
 
 export const goalsDataReducer = createReducer(
   initialState,
+  on(updateCurrentWeekStartDateAction, updateCurrentWeekStartDate),
   on(loadMonthInfoToFromDBAction, setLoading),
   on(addMonthInfoToStoreAction, addMonthInfoReducer),
   on(emptyMonthInfoAction, addEmptyMonthInfoToStore),
@@ -25,14 +27,24 @@ export const goalsDataReducer = createReducer(
   on(saveMonthInfoToDBFailAction, monthInfoSaveFail)
 );
 
+function updateCurrentWeekStartDate(
+  store: IGoalDataState,
+  {
+    currentWeekStartDate,
+  }: {
+    currentWeekStartDate: number;
+  }
+): IGoalDataState {
+  return {
+    ...store,
+    currentWeekSundayDate: currentWeekStartDate,
+  };
+}
 function setLoading(
   store: IGoalDataState,
   {
     loading,
   }: {
-    year?: number;
-    month?: string;
-    weekDates?: (number | null)[];
     loading?: boolean;
   }
 ): IGoalDataState {

@@ -11,36 +11,38 @@ export class TargetsDbService {
     return `targets-${year}`;
   }
 
-  constructor(
-    private _firestore: FirestoreService,
-    private _dateTime: DateTimeService
-  ) {}
+  constructor(private _firestore: FirestoreService) {}
 
-  isMonthGoalsStored(year?: number, month?: string) {
-    month = month || this._dateTime.currentMonthName;
-    year = year || this._dateTime.today.getFullYear();
+  isMonthGoalsStored(year?: number, monthName?: string) {
+    year = year || DateTimeService.currentYear;
+    monthName = monthName || DateTimeService.currentMonthName;
     return this._firestore
       .getCollectionRef(this.getYearPath(year))
-      .doc(month)
+      .doc(monthName)
       .get()
       .pipe(map((val) => val.exists));
   }
 
-  getMonthGoalsData(
-    year?: number,
-    month?: string,
-    weekDates?: (number | null)[]
-  ) {
-    month = month || this._dateTime.currentMonthName;
-    year = year || this._dateTime.today.getFullYear();
-    weekDates = weekDates || this._dateTime.getValidWeekDaysList();
+  getMonthGoalsData({
+    year,
+    monthName,
+    weekStartDate,
+  }: {
+    year?: number;
+    monthName?: string;
+    weekStartDate: number;
+  }) {
+    year = year || DateTimeService.currentYear;
+    monthName = monthName || DateTimeService.currentMonthName;
+    const weekDates = DateTimeService.getValidWeekDaysList(weekStartDate);
+    console.log('🚀 ~ weekDates', weekDates);
 
     const yearPath = this.getYearPath(year);
 
     let monthInfo: IMonthInfo;
     return this._firestore
       .getCollectionRef(yearPath)
-      .doc(month)
+      .doc(monthName)
       .get()
       .pipe(
         mergeMap((month_db) => {
@@ -51,7 +53,7 @@ export class TargetsDbService {
             };
 
             return this._firestore
-              .getCollectionRef(`${yearPath}/${month}/goals`)
+              .getCollectionRef(`${yearPath}/${monthName}/goals`)
               .get();
           } else {
             return throwError('EmptyMonth');
@@ -91,10 +93,21 @@ export class TargetsDbService {
       );
   }
 
-  updateGoalHours(goalID: string, day: number, hrs: number) {
-    const monthName = this._dateTime.currentMonthName;
-    const year = this._dateTime.currentYear;
-
+  updateGoalHours({
+    year,
+    monthName,
+    goalID,
+    day,
+    hrs,
+  }: {
+    year?: number;
+    monthName?: string;
+    goalID: string;
+    day: number;
+    hrs: number;
+  }) {
+    year = year || DateTimeService.currentYear;
+    monthName = monthName || DateTimeService.currentMonthName;
     const objToUpdate: { [key: string]: number } = {};
     objToUpdate[`perDayData.${day}`] = hrs;
     return this._firestore
@@ -104,10 +117,20 @@ export class TargetsDbService {
   }
 
   //#region Save Month data
-  saveMonthGoals(motto: string, goals: string[]) {
+  saveMonthGoals({
+    year,
+    monthName,
+    motto,
+    goals,
+  }: {
+    year?: number;
+    monthName?: string;
+    motto: string;
+    goals: string[];
+  }) {
+    year = year || DateTimeService.currentYear;
+    monthName = monthName || DateTimeService.currentMonthName;
     try {
-      const monthName = this._dateTime.currentMonthName;
-      const year = this._dateTime.currentYear;
       const targetRef = this._firestore
         .getCollectionRef(`${this.getYearPath(year)}`)
         .doc(monthName).ref;

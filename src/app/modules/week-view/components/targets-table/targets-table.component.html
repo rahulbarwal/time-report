@@ -1,41 +1,39 @@
-<div class="lg:w-2/3 w-full mx-auto overflow-auto">
-  <table class="table-auto w-full text-left whitespace-no-wrap">
-    <thead>
-      <tr>
-        <th
-          class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl text-center"
-          *ngFor="let title of headings"
+<table class="table-auto w-full text-left whitespace-no-wrap">
+  <thead>
+    <tr>
+      <th
+        class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl text-center"
+        *ngFor="let title of headings"
+      >
+        {{ title }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let goal of goalsData" class="border-b border-gray-100">
+      <td class="px-4 py-3 italic bg-gray-100">{{ goal.title }}</td>
+      <td
+        class="px-4 py-3 text-center"
+        *ngFor="let hrs of goal.perDayData; let index = index"
+      >
+        <ng-container
+          [ngTemplateOutlet]="
+            index === currentDayIndex
+              ? EditableHrsTemplate
+              : benchmarkedHrsTemplate
+          "
+          [ngTemplateOutletContext]="{
+            hrs: hrs,
+            goal: goal,
+            index: index,
+            prevHr: goal.perDayData[index - 1] || null
+          }"
         >
-          {{ title }}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let goal of goalsData" class="border-b border-gray-100">
-        <td class="px-4 py-3 italic bg-gray-100">{{ goal.title }}</td>
-        <td
-          class="px-4 py-3 text-center"
-          *ngFor="let hrs of goal.perDayData; let index = index"
-        >
-          <ng-container
-            [ngTemplateOutlet]="
-              index === currentDayIndex
-                ? EditableHrsTemplate
-                : benchmarkedHrsTemplate
-            "
-            [ngTemplateOutletContext]="{
-              hrs: hrs,
-              goal: goal,
-              index: index,
-              prevHr: goal.perDayData[index - 1] || null
-            }"
-          >
-          </ng-container>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        </ng-container>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <ng-template #benchmarkedHrsTemplate let-noHrs="hrs" let-prevDayHrs="prevHr">
   <span

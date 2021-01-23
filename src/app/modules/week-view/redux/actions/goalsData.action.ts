@@ -1,13 +1,20 @@
 import { createAction, props } from '@ngrx/store';
 import { IMonthInfo } from '../state/goalsData.state';
 
+const updateCurrentWeekStartDateAction = createAction(
+  '[MonthInfo] Update Current week start date',
+  props<{
+    currentWeekStartDate: number;
+  }>()
+);
+
 const loadMonthInfoToFromDBAction = createAction(
   '[MonthInfo] Load month data from DB',
   props<{
     year?: number;
     month?: string;
-    weekDates?: (number | null)[];
     loading?: boolean;
+    weekStartDate: number;
   }>()
 );
 
@@ -40,6 +47,7 @@ const saveMonthInfoToDBSuccessAction = createAction(
 );
 
 export {
+  updateCurrentWeekStartDateAction,
   loadMonthInfoToFromDBAction,
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,

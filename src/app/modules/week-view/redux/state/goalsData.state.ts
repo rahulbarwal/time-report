@@ -19,6 +19,7 @@ interface IGoalDataState extends IAppState {
   dataLoading: boolean;
   saveError: string | null;
   dataSaved: boolean | null;
+  currentWeekSundayDate: number | null;
 }
 
 const getGoalDataSelector = createFeatureSelector<IGoalDataState>(
@@ -39,9 +40,15 @@ const getSaveErrorSelector = createSelector(
   getGoalDataSelector,
   (state) => state.saveError
 );
+
 const getSavedSelector = createSelector(
   getGoalDataSelector,
   (state) => state.dataSaved
+);
+
+const getCurrentSundaySelector = createSelector(
+  getGoalDataSelector,
+  (state) => state.currentWeekSundayDate
 );
 
 export {
@@ -54,4 +61,5 @@ export {
   GOALS_DATA_FEATURE_KEY,
   getSaveErrorSelector,
   getSavedSelector,
+  getCurrentSundaySelector,
 };

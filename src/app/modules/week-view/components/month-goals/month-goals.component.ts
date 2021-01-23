@@ -35,13 +35,12 @@ export class MonthGoalsComponent implements OnInit, OnDestroy {
   dataSaved: Subscription;
 
   constructor(
-    private _dateTime: DateTimeService,
     private _store: Store<IGoalDataState>,
     private _formBuilder: FormBuilder,
     private _router: Router,
     private _activatedRoute: ActivatedRoute
   ) {
-    this.currentMonth = this._dateTime.currentMonthName;
+    this.currentMonth = DateTimeService.currentMonthName;
     this.saveError$ = this._store.select(getSaveErrorSelector);
     this.dataSaved = this._store.select(getSavedSelector).subscribe((val) => {
       if (val) {
