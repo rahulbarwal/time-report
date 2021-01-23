@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { of, throwError } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 import { IGoalInfo, IMonthInfo } from '../../redux/state/goalsData.state';
 import { DateTimeService } from '../date-time/date-time.service';
@@ -15,6 +15,16 @@ export class TargetsDbService {
     private _firestore: FirestoreService,
     private _dateTime: DateTimeService
   ) {}
+
+  isMonthGoalsStored(year?: number, month?: string) {
+    month = month || this._dateTime.currentMonthName;
+    year = year || this._dateTime.today.getFullYear();
+    return this._firestore
+      .getCollectionRef(this.getYearPath(year))
+      .doc(month)
+      .get()
+      .pipe(map((val) => val.exists));
+  }
 
   getMonthGoalsData(
     year?: number,

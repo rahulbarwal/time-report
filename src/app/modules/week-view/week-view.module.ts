@@ -18,6 +18,7 @@ import { GoalsDataEffects } from './redux/effects/goalsData.effects';
 import { MonthGoalsComponent } from './components/month-goals/month-goals.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GoalsListComponent } from './components/month-goals/goals-list/goals-list.component';
+import { GoalsCreateGuard } from './guards/goals-create/goals-create.guard';
 @NgModule({
   declarations: [
     WeekTargetsComponent,
@@ -37,6 +38,6 @@ import { GoalsListComponent } from './components/month-goals/goals-list/goals-li
     EffectsModule.forFeature([GoalsDataEffects]),
   ],
   exports: [],
-  providers: [DateTimeService, TargetsDbService],
+  providers: [DateTimeService, TargetsDbService, GoalsCreateGuard],
 })
 export class WeekViewModule {}
