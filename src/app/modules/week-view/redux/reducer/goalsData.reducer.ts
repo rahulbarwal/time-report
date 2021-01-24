@@ -94,7 +94,6 @@ function addMonthInfoReducer(
   }
   monthsMap.set(monthName, newData);
 
-  console.log('🚀 ~ monthsMap', monthsMap);
   return {
     ...store,
     months: monthsMap,
