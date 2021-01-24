@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -14,7 +15,16 @@ import { IGoalInfo } from '../../redux/state/goalsData.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TargetsTableComponent {
-  @Input() goalsData!: IGoalInfo[];
+  private _goalsData!: IGoalInfo[];
+  @Input() currentWeek!: number[];
+  @Input() set goalsData(val: IGoalInfo[]) {
+    this._goalsData = val;
+    this.indexForLoadingSpinner = null;
+  }
+  get goalsData() {
+    return this._goalsData;
+  }
+
   @Input() headings!: string[];
   @Input() currentDayIndex!: number;
 
@@ -24,11 +34,48 @@ export class TargetsTableComponent {
     dayIndex: number;
   }>();
 
-  allowedHours = [2, 3, 4, 5];
+  allowedHours = [0, 1, 2, 3, 4];
 
-  constructor() {}
+  indexForLoadingSpinner: { hrIndex: number; goalID: string } | null = null;
 
-  hoursClick(goalID: string, hrs: number, dayIndex: number) {
+  constructor(private _changeDetector: ChangeDetectorRef) {}
+
+  getHrColorClass(hr?: number, prevDayHr?: number) {
+    if (hr && hr > 0) {
+      if (!prevDayHr) {
+        return '';
+      }
+      const diff = hr - prevDayHr;
+      if (diff > 0) {
+        switch (diff) {
+          case 1:
+            return 'text-green-300';
+          case 2:
+            return 'text-green-400';
+          case 3:
+            return 'text-green-500';
+          case 4:
+            return 'text-green-600';
+        }
+      } else {
+        switch (Math.abs(diff)) {
+          case 1:
+            return 'text-yellow-400';
+          case 2:
+            return 'text-red-400';
+          case 3:
+            return 'text-red-500';
+          case 4:
+            return 'text-red-600';
+        }
+      }
+    }
+    return '';
+  }
+
+  hoursClick(goalID: string, hrs: number, dayIndex: number, hrIndex: number) {
+    this.indexForLoadingSpinner = { hrIndex, goalID };
+    this._changeDetector.detectChanges();
     this.setHoursForGoal.emit({
       goalID,
       dayIndex,

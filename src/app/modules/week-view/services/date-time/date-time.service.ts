@@ -2,30 +2,23 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class DateTimeService {
-  today: Date;
-  lastSunday: Date;
+  static today = new Date();
+  static lastSunday = new Date(
+    new Date(DateTimeService.today).setDate(
+      DateTimeService.today.getDate() - DateTimeService.today.getDay()
+    )
+  );
+  static getDaysInMonth = (month?: number, year?: number) =>
+    new Date(
+      year || DateTimeService.today.getFullYear(),
+      month || DateTimeService.today.getMonth(),
+      0
+    ).getDate();
 
-  constructor() {
-    this.today = new Date();
-    this.today = new Date(new Date(this.today).setDate(this.today.getDate()));
-
-    this.lastSunday = this.initializeLastSunday(this.today);
-  }
-
-  initializeLastSunday(today: Date): Date {
-    const days = today.getDay();
-    return new Date(new Date(today).setDate(today.getDate() - days));
-  }
-
-  getValidWeekDaysList(): (number | null)[] {
-    const sundayDate = this.lastSunday.getDate();
-    const getDaysInMonth = (month: number, year: number) =>
-      new Date(year, month, 0).getDate();
-    const maxDate = getDaysInMonth(
-      this.today.getMonth(),
-      this.today.getFullYear()
-    );
-    return [
+  static getValidWeekDaysList(sundayDate: number): number[] {
+    sundayDate = sundayDate;
+    const maxDate = DateTimeService.getDaysInMonth();
+    const week: number[] = [
       sundayDate,
       sundayDate + 1 <= maxDate ? sundayDate + 1 : null,
       sundayDate + 2 <= maxDate ? sundayDate + 2 : null,
@@ -33,19 +26,20 @@ export class DateTimeService {
       sundayDate + 4 <= maxDate ? sundayDate + 4 : null,
       sundayDate + 5 <= maxDate ? sundayDate + 5 : null,
       sundayDate + 6 <= maxDate ? sundayDate + 6 : null,
-    ];
+    ].filter((val) => val !== null) as number[];
+    return week;
   }
 
-  get todayWeekDayName() {
-    return DateTimeService.getWeekDayNameFromDate(this.today);
+  static get todayWeekDayName() {
+    return DateTimeService.getWeekDayNameFromDate(DateTimeService.today);
   }
 
-  get currentYear() {
-    return this.today.getFullYear();
+  static get currentYear() {
+    return DateTimeService.today.getFullYear();
   }
 
-  get currentMonthName() {
-    return DateTimeService.getMonthNameDate(this.today);
+  static get currentMonthName() {
+    return DateTimeService.getMonthNameDate(DateTimeService.today);
   }
 
   static getWeekDayNameFromDate(date: Date): string {

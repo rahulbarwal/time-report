@@ -1,0 +1,52 @@
+<section class="text-gray-600 body-font relative">
+  <div class="container px-5 mx-auto">
+    <div class="flex flex-col text-center w-full mb-12">
+      <h1
+        class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900"
+      >
+        {{ currentMonth }}
+      </h1>
+      <p class="lg:w-2/3 mx-auto leading-relaxed text-base">
+        Want to know your priorities? Look at your results today!
+      </p>
+    </div>
+    <div class="lg:w-1/2 md:w-2/3 mx-auto">
+      <div class="-m-2 mb-12" [formGroup]="monthForm">
+        <div class="w-full">
+          <input
+            type="text"
+            class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+            autocomplete="off"
+            placeholder="Motto of month"
+            formControlName="motto"
+          />
+        </div>
+        <div class="my-10">
+          <app-goals-list [goalsFormArray]="goals"></app-goals-list>
+        </div>
+      </div>
+    </div>
+    <div class="p-2 w-full flex flex-col justify-center">
+      <button
+        class="btn-primary mx-auto disabled:opacity-50"
+        [disabled]="monthForm.invalid"
+        (click)="onSubmit()"
+      >
+        Submit
+      </button>
+      <span
+        *ngIf="monthForm.dirty && goalsEmptyError"
+        class="text-sm text-red-400 text-center"
+      >
+        Add at least one goal
+      </span>
+
+      <span
+        *ngIf="saveError$ | async as error"
+        class="text-sm text-red-400 text-center"
+      >
+        {{ error }}
+      </span>
+    </div>
+  </div>
+</section>

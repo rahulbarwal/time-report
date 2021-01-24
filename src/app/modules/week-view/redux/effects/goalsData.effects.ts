@@ -1,20 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { from, of, throwError } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { of, throwError } from 'rxjs';
 import { catchError, concatMap, switchMap } from 'rxjs/operators';
 import { TargetsDbService } from '../../services/targets-db/targets-db.service';
 import {
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
   loadMonthInfoToFromDBAction,
-  updateGoalHrsForTodayAction,
+  saveMonthInfoToDBAction,
+  saveMonthInfoToDBFailAction,
+  saveMonthInfoToDBSuccessAction,
 } from '../actions/goalsData.action';
+import { IGoalDataState } from '../state/goalsData.state';
 
 @Injectable()
 export class GoalsDataEffects {
   constructor(
     private _targetsDB: TargetsDbService,
-    private _actions$: Actions
+    private _actions$: Actions,
+    private _store: Store<IGoalDataState>
   ) {}
 
   @Effect()
@@ -22,7 +27,11 @@ export class GoalsDataEffects {
     ofType(loadMonthInfoToFromDBAction),
     switchMap((action) =>
       this._targetsDB
-        .getMonthGoalsData(action.year, action.month, action.weekDates)
+        .getMonthGoalsData({
+          year: action.year,
+          monthName: action.month,
+          weekStartDate: action.weekStartDate,
+        })
         .pipe(
           concatMap((info) =>
             of(
@@ -37,6 +46,24 @@ export class GoalsDataEffects {
               return of(
                 emptyMonthInfoAction({ monthName: action.month as string })
               );
+            }
+            return throwError(e);
+          })
+        )
+    )
+  );
+
+  @Effect()
+  saveMonthToDB$ = this._actions$.pipe(
+    ofType(saveMonthInfoToDBAction),
+    switchMap((action) =>
+      this._targetsDB
+        .saveMonthGoals({ motto: action.motto, goals: action.goals })
+        .pipe(
+          concatMap((_) => of(saveMonthInfoToDBSuccessAction())),
+          catchError((e) => {
+            if (e === 'SaveFail') {
+              return of(saveMonthInfoToDBFailAction());
             }
             return throwError(e);
           })

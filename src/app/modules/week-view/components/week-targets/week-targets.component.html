@@ -2,19 +2,47 @@
   <div class="container px-5 py-10 mx-auto">
     <ng-container *ngIf="!(loading$ | async); else loadingTemplate">
       <ng-container *ngIf="monthInfo$ | async as info; else emptyTemplate">
-        <div class="flex flex-col text-center w-full mb-20">
+        <div
+          class="lg:w-2/3 mx-auto overflow-auto flex flex-col text-center w-full mb-20"
+        >
           <h1
             class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900"
           >
             {{ info.mottoOfMonth }}
           </h1>
+          <article class="p-2 my-5 flex justify-between bg-gray-50 rounded">
+            <button
+              class="btn-primary disabled:opacity-50"
+              (click)="loadPrevWeek()"
+            >
+              Prev
+            </button>
+            <span class="font-semibold">
+              Current: {{ weekDates[0] }} {{ currentMonth | slice: 0:3 }} -
+              {{ weekDates[weekDates.length - 1] }}
+              {{ currentMonth | slice: 0:3 }}
+              <a
+                class="text-xs underline cursor-pointer text-indigo-500"
+                (click)="jumpToToday()"
+              >
+                Today
+              </a>
+            </span>
+            <button
+              class="btn-primary disabled:opacity-50"
+              (click)="loadNextWeek()"
+            >
+              Next
+            </button>
+          </article>
+          <app-targets-table
+            [currentWeek]="weekDates"
+            [goalsData]="info.goals"
+            [headings]="weekTitles"
+            [currentDayIndex]="currentDayIndex"
+            (setHoursForGoal)="setHoursForGoal($event)"
+          ></app-targets-table>
         </div>
-        <app-targets-table
-          [goalsData]="info.goals"
-          [headings]="weekTitles"
-          [currentDayIndex]="currentDayIndex"
-          (setHoursForGoal)="setHoursForGoal($event)"
-        ></app-targets-table>
       </ng-container>
     </ng-container>
   </div>
@@ -23,6 +51,9 @@
 <ng-template #emptyTemplate>
   <div class="flex flex-col text-center w-full mb-20">
     <p class="font-medium title-font text-gray-400">No data in DB to show</p>
+    <span class="mt-5">
+      <a class="btn-primary" [routerLink]="['../goals']">Create Goals</a>
+    </span>
   </div>
 </ng-template>
 

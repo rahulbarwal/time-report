@@ -1,40 +1,95 @@
-<div class="lg:w-2/3 w-full mx-auto overflow-auto">
-  <table class="table-auto w-full text-left whitespace-no-wrap">
-    <thead>
-      <tr>
-        <th
-          class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl text-center"
-          *ngFor="let title of headings"
+<table class="table-auto w-full text-left whitespace-no-wrap">
+  <thead>
+    <tr>
+      <th
+        class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl text-center"
+        *ngFor="let title of headings"
+      >
+        {{ title }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let goal of goalsData" class="border-b border-gray-100">
+      <td class="px-4 py-3 italic bg-gray-100">{{ goal.title }}</td>
+      <td
+        class="px-4 py-3 text-center"
+        *ngFor="
+          let hrs of goal.perDayData.slice(
+            currentWeek[0] - 1,
+            currentWeek[currentWeek.length - 1]
+          );
+          let index = index
+        "
+      >
+        <ng-container
+          [ngTemplateOutlet]="
+            index === currentDayIndex
+              ? EditableHrsTemplate
+              : benchmarkedHrsTemplate
+          "
+          [ngTemplateOutletContext]="{
+            hrs: hrs,
+            goal: goal,
+            index: index,
+            prevHr: goal.perDayData[index - 1] || null
+          }"
         >
-          {{ title }}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let goal of goalsData">
-        <td class="px-4 py-3 text-center">{{ goal.title }}</td>
-        <td
-          class="px-4 py-3 text-center"
-          *ngFor="let hrs of goal.perDayData; let index = index"
-        >
-          <div
-            *ngIf="index === currentDayIndex; else displayHoursTemplate"
-            class="flex"
-          >
-            <span
-              *ngFor="let hr of allowedHours"
-              class="flex h-8 items-center justify-center rounded-full text-center text-white w-8 mr-1 cursor-pointer shadow"
-              [ngClass]="hrs === hr ? 'bg-indigo-500' : 'bg-gray-300'"
-              (click)="hoursClick(goal.id, hr, index)"
-            >
-              {{ hr }}
-            </span>
-          </div>
-          <ng-template #displayHoursTemplate>
-            {{ hrs }}
-          </ng-template>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        </ng-container>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #benchmarkedHrsTemplate let-noHrs="hrs" let-prevDayHrs="prevHr">
+  <span
+    class="text-gray-400 font-bold"
+    [ngClass]="getHrColorClass(noHrs, prevDayHrs)"
+  >
+    <ng-component
+      [ngTemplateOutlet]="noOfHrsTemplate"
+      [ngTemplateOutletContext]="{ hrs: noHrs }"
+    ></ng-component>
+  </span>
+</ng-template>
+
+<ng-template #noOfHrsTemplate let-noHrs="hrs">
+  {{ noHrs }}
+</ng-template>
+
+<ng-template #loadingTemplate>
+  <span class="flex items-center h-5 w-5">
+    <span
+      class="animate-ping inline-flex h-full w-full rounded-full bg-indigo-300 opacity-75"
+    ></span>
+  </span>
+</ng-template>
+
+<ng-template
+  #EditableHrsTemplate
+  let-hrs="hrs"
+  let-goal="goal"
+  let-dayIndex="index"
+>
+  <div class="flex">
+    <span
+      *ngFor="let hr of allowedHours; let hrIndex = index"
+      class="flex h-8 items-center justify-center rounded-full text-center w-8 mr-1 cursor-pointer shadow"
+      [ngClass]="
+        hrs === hr ? 'bg-indigo-300 text-white' : 'bg-gray-200 text-gray-700'
+      "
+      (click)="hoursClick(goal.id, hr, dayIndex, hrIndex)"
+    >
+      <ng-container
+        [ngTemplateOutlet]="
+          indexForLoadingSpinner?.goalID === goal.id &&
+          indexForLoadingSpinner?.hrIndex === hrIndex
+            ? loadingTemplate
+            : noOfHrsTemplate
+        "
+        [ngTemplateOutletContext]="{ hrs: hr }"
+      >
+      </ng-container>
+    </span>
+  </div>
+</ng-template>

@@ -1,31 +1,56 @@
-import { createReducer, on, Store } from '@ngrx/store';
+import { getAllLifecycleHooks } from '@angular/compiler/src/lifecycle_reflector';
+import { createReducer, on } from '@ngrx/store';
+import { DateTimeService } from '../../services/date-time/date-time.service';
 import {
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
   loadMonthInfoToFromDBAction,
+  saveMonthInfoToDBFailAction,
+  saveMonthInfoToDBSuccessAction,
+  updateCurrentWeekStartDateAction,
 } from '../actions/goalsData.action';
-import { IGoalDataState, IMonthInfo } from '../state/goalsData.state';
+import {
+  IGoalDataState,
+  IMonthInfo,
+  IMonthInfoState,
+} from '../state/goalsData.state';
 
 const initialState: IGoalDataState = {
-  months: new Map(),
+  months: new Map<string, IMonthInfoState>(),
   dataLoading: false,
+  saveError: null,
+  dataSaved: null,
+  currentWeekSundayDate: DateTimeService.lastSunday.getDate(),
 };
 
 export const goalsDataReducer = createReducer(
   initialState,
+  on(updateCurrentWeekStartDateAction, updateCurrentWeekStartDate),
   on(loadMonthInfoToFromDBAction, setLoading),
   on(addMonthInfoToStoreAction, addMonthInfoReducer),
-  on(emptyMonthInfoAction, addEmptyMonthInfoToStore)
+  on(emptyMonthInfoAction, addEmptyMonthInfoToStore),
+  on(saveMonthInfoToDBSuccessAction, monthInfoSaveSuccess),
+  on(saveMonthInfoToDBFailAction, monthInfoSaveFail)
 );
 
+function updateCurrentWeekStartDate(
+  store: IGoalDataState,
+  {
+    currentWeekStartDate,
+  }: {
+    currentWeekStartDate: number;
+  }
+): IGoalDataState {
+  return {
+    ...store,
+    currentWeekSundayDate: currentWeekStartDate,
+  };
+}
 function setLoading(
   store: IGoalDataState,
   {
     loading,
   }: {
-    year?: number;
-    month?: string;
-    weekDates?: (number | null)[];
     loading?: boolean;
   }
 ): IGoalDataState {
@@ -39,10 +64,36 @@ function addMonthInfoReducer(
   store: IGoalDataState,
   { monthName, data }: { monthName: string; data: IMonthInfo }
 ): IGoalDataState {
-  const monthsMap = new Map<string, IMonthInfo>(
+  const monthsMap = new Map<string, IMonthInfoState>(
     JSON.parse(JSON.stringify(Array.from(store.months)))
   );
-  monthsMap.set(monthName, data);
+  const newData: IMonthInfoState = JSON.parse(JSON.stringify(data));
+  newData.goals.forEach((goal) => {
+    let perDayData;
+    if (monthsMap.has(monthName) && monthsMap.get(monthName) !== null) {
+      const existingData = monthsMap
+        .get(monthName)
+        ?.goals.find((g) => g.id === goal.id);
+      perDayData = existingData?.perDayData || [];
+    } else {
+      perDayData = new Array(DateTimeService.getDaysInMonth());
+    }
+    perDayData.splice(
+      store.currentWeekSundayDate - 1,
+      goal.perDayData.length,
+      ...goal.perDayData
+    );
+    goal.perDayData = perDayData;
+  });
+  if (monthsMap.has(monthName) && monthsMap.get(monthName) !== null) {
+    newData.weeksAvailable = monthsMap.get(monthName)?.weeksAvailable || [];
+
+    newData.weeksAvailable.push(store.currentWeekSundayDate);
+  } else {
+    newData.weeksAvailable = [store.currentWeekSundayDate];
+  }
+  monthsMap.set(monthName, newData);
+
   return {
     ...store,
     months: monthsMap,
@@ -54,7 +105,7 @@ function addEmptyMonthInfoToStore(
   store: IGoalDataState,
   { monthName }: { monthName: string }
 ): IGoalDataState {
-  const monthsMap = new Map<string, IMonthInfo | null>(
+  const monthsMap = new Map<string, IMonthInfoState | null>(
     JSON.parse(JSON.stringify(Array.from(store.months)))
   );
   monthsMap.set(monthName, null);
@@ -62,5 +113,21 @@ function addEmptyMonthInfoToStore(
     ...store,
     months: monthsMap,
     dataLoading: false,
+  };
+}
+
+function monthInfoSaveFail(store: IGoalDataState): IGoalDataState {
+  return {
+    ...store,
+    saveError: 'Failed to save month info',
+    dataSaved: false,
+  };
+}
+
+function monthInfoSaveSuccess(store: IGoalDataState): IGoalDataState {
+  return {
+    ...store,
+    saveError: '',
+    dataSaved: true,
   };
 }
