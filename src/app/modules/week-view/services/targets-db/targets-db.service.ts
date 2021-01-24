@@ -35,8 +35,6 @@ export class TargetsDbService {
     year = year || DateTimeService.currentYear;
     monthName = monthName || DateTimeService.currentMonthName;
     const weekDates = DateTimeService.getValidWeekDaysList(weekStartDate);
-    console.log('🚀 ~ weekDates', weekDates);
-
     const yearPath = this.getYearPath(year);
 
     let monthInfo: IMonthInfo;

@@ -19,7 +19,7 @@ interface IGoalDataState extends IAppState {
   dataLoading: boolean;
   saveError: string | null;
   dataSaved: boolean | null;
-  currentWeekSundayDate: number | null;
+  currentWeekSundayDate: number;
 }
 
 const getGoalDataSelector = createFeatureSelector<IGoalDataState>(

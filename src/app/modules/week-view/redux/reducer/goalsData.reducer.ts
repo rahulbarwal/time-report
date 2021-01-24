@@ -1,4 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
+import { DateTimeService } from '../../services/date-time/date-time.service';
 import {
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
@@ -14,7 +15,7 @@ const initialState: IGoalDataState = {
   dataLoading: false,
   saveError: null,
   dataSaved: null,
-  currentWeekSundayDate: null,
+  currentWeekSundayDate: DateTimeService.lastSunday.getDate(),
 };
 
 export const goalsDataReducer = createReducer(

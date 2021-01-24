@@ -51,12 +51,6 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
         this.updateComponentDateVars();
         this.dispatchLoadMonthInfo(true, this.currentWeekStartDate);
       });
-
-    this.store.dispatch(
-      updateCurrentWeekStartDateAction({
-        currentWeekStartDate: DateTimeService.lastSunday.getDate(),
-      })
-    );
   }
 
   ngOnDestroy() {
@@ -75,10 +69,6 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   }
 
   dispatchLoadMonthInfo(setLoading = true, currentWeekSunday?: number) {
-    console.log(
-      '🚀 ~ dispatchLoadMonthInfo ~ currentWeekSunday',
-      currentWeekSunday
-    );
     this.store.dispatch(
       loadMonthInfoToFromDBAction({
         year: DateTimeService.currentYear,
