@@ -21,6 +21,12 @@
               Current: {{ weekDates[0] }} {{ currentMonth | slice: 0:3 }} -
               {{ weekDates[weekDates.length - 1] }}
               {{ currentMonth | slice: 0:3 }}
+              <a
+                class="text-xs underline cursor-pointer text-indigo-500"
+                (click)="jumpToToday()"
+              >
+                Today
+              </a>
             </span>
             <button
               class="btn-primary disabled:opacity-50"

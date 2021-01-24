@@ -115,12 +115,20 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   }
 
   changeWeeksData(next = true) {
+    this.dispatchUpdateCurrentWeekDate(
+      next ? this.currentWeekStartDate + 7 : this.currentWeekStartDate - 7
+    );
+  }
+
+  private dispatchUpdateCurrentWeekDate(currentWeekStartDate: number) {
     this.store.dispatch(
       updateCurrentWeekStartDateAction({
-        currentWeekStartDate: next
-          ? this.currentWeekStartDate + 7
-          : this.currentWeekStartDate - 7,
+        currentWeekStartDate,
       })
     );
+  }
+
+  jumpToToday() {
+    this.dispatchUpdateCurrentWeekDate(DateTimeService.lastSunday.getDate());
   }
 }
