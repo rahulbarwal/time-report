@@ -16,7 +16,9 @@ import { IGoalInfo } from '../../redux/state/goalsData.state';
 })
 export class TargetsTableComponent {
   private _goalsData!: IGoalInfo[];
+  @Input() currentWeek!: number[];
   @Input() set goalsData(val: IGoalInfo[]) {
+    console.log('🚀 ~ @Input ~ val', val);
     this._goalsData = val;
     this.indexForLoadingSpinner = null;
   }

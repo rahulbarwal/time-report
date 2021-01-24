@@ -14,7 +14,13 @@
       <td class="px-4 py-3 italic bg-gray-100">{{ goal.title }}</td>
       <td
         class="px-4 py-3 text-center"
-        *ngFor="let hrs of goal.perDayData; let index = index"
+        *ngFor="
+          let hrs of goal.perDayData.slice(
+            currentWeek[0] - 1,
+            currentWeek[currentWeek.length - 1]
+          );
+          let index = index
+        "
       >
         <ng-container
           [ngTemplateOutlet]="

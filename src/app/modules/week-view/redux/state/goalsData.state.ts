@@ -14,8 +14,12 @@ interface IMonthInfo {
   goals: IGoalInfo[];
 }
 
+interface IMonthInfoState extends IMonthInfo {
+  weeksAvailable: number[];
+}
+
 interface IGoalDataState extends IAppState {
-  months: Map<string, IMonthInfo | null>;
+  months: Map<string, IMonthInfoState | null>;
   dataLoading: boolean;
   saveError: string | null;
   dataSaved: boolean | null;
@@ -54,6 +58,7 @@ const getCurrentSundaySelector = createSelector(
 export {
   IGoalInfo,
   IMonthInfo,
+  IMonthInfoState,
   IGoalDataState,
   IAppState,
   getMonthsMapSelector,

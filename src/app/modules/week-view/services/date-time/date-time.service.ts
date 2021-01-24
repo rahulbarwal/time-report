@@ -8,16 +8,17 @@ export class DateTimeService {
       DateTimeService.today.getDate() - DateTimeService.today.getDay()
     )
   );
+  static getDaysInMonth = (month?: number, year?: number) =>
+    new Date(
+      year || DateTimeService.today.getFullYear(),
+      month || DateTimeService.today.getMonth(),
+      0
+    ).getDate();
 
-  static getValidWeekDaysList(sundayDate: number): (number | null)[] {
+  static getValidWeekDaysList(sundayDate: number): number[] {
     sundayDate = sundayDate;
-    const getDaysInMonth = (month: number, year: number) =>
-      new Date(year, month, 0).getDate();
-    const maxDate = getDaysInMonth(
-      DateTimeService.today.getMonth(),
-      DateTimeService.today.getFullYear()
-    );
-    return [
+    const maxDate = DateTimeService.getDaysInMonth();
+    const week: number[] = [
       sundayDate,
       sundayDate + 1 <= maxDate ? sundayDate + 1 : null,
       sundayDate + 2 <= maxDate ? sundayDate + 2 : null,
@@ -25,7 +26,8 @@ export class DateTimeService {
       sundayDate + 4 <= maxDate ? sundayDate + 4 : null,
       sundayDate + 5 <= maxDate ? sundayDate + 5 : null,
       sundayDate + 6 <= maxDate ? sundayDate + 6 : null,
-    ];
+    ].filter((val) => val !== null) as number[];
+    return week;
   }
 
   static get todayWeekDayName() {

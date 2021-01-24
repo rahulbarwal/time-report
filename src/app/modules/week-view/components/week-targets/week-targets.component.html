@@ -36,6 +36,7 @@
             </button>
           </article>
           <app-targets-table
+            [currentWeek]="weekDates"
             [goalsData]="info.goals"
             [headings]="weekTitles"
             [currentDayIndex]="currentDayIndex"

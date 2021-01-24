@@ -1,11 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import {
   loadMonthInfoToFromDBAction,
   updateCurrentWeekStartDateAction,
-  updateGoalHrsForTodayAction,
 } from '../../redux/actions/goalsData.action';
 import {
   getCurrentSundaySelector,
@@ -13,6 +12,7 @@ import {
   getMonthsMapSelector,
   IGoalDataState,
   IMonthInfo,
+  IMonthInfoState,
 } from '../../redux/state/goalsData.state';
 import { DateTimeService } from '../../services/date-time/date-time.service';
 import { TargetsDbService } from '../../services/targets-db/targets-db.service';
@@ -24,10 +24,10 @@ import { TargetsDbService } from '../../services/targets-db/targets-db.service';
 })
 export class WeekTargetsComponent implements OnInit, OnDestroy {
   loading$!: Observable<boolean>;
-  monthInfo$!: Observable<IMonthInfo | null | undefined>;
+  monthInfo$!: Observable<IMonthInfoState | null | undefined>;
   currentMonth!: string;
   weekTitles!: string[];
-  weekDates!: (number | null)[];
+  weekDates!: number[];
   currentDayIndex!: number;
   currentWeekStartDate!: number;
   currentWeekSubscription!: Subscription;
@@ -49,7 +49,11 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
       .subscribe((val) => {
         this.currentWeekStartDate = val as number;
         this.updateComponentDateVars();
-        this.dispatchLoadMonthInfo(true, this.currentWeekStartDate);
+        this.monthInfo$.subscribe((monthData) => {
+          if (!monthData?.weeksAvailable.includes(this.currentWeekStartDate)) {
+            this.dispatchLoadMonthInfo(true, this.currentWeekStartDate);
+          }
+        });
       });
   }
 
