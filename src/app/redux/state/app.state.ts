@@ -1,3 +1,13 @@
-interface IAppState {}
+interface ILoggedInUserInfo {
+    name: string;
+    email: string;
+    phone: string;
+    photoUrl: string;
+}
+interface IAppState {
+    user: ILoggedInUserInfo
+}
 
-export { IAppState };
+const userInfoSelector = (state: IAppState) => state.user;
+
+export { IAppState, ILoggedInUserInfo, userInfoSelector };

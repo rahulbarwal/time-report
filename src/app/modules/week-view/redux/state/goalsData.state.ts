@@ -18,7 +18,7 @@ interface IMonthInfoState extends IMonthInfo {
   weeksAvailable: number[];
 }
 
-interface IGoalDataState extends IAppState {
+interface IGoalDataState {
   months: Map<string, IMonthInfoState | null>;
   dataLoading: boolean;
   saveError: string | null;

@@ -10,6 +10,8 @@ import { IAppState } from './redux/state/app.state';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { loggedInUserReducer } from './redux/user/user.reducer';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent],
@@ -17,7 +19,10 @@ import { EffectsModule } from '@ngrx/effects';
     BrowserModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(firbaseConfig),
-    StoreModule.forRoot<IAppState>({}, {}),
+    AngularFireAuthModule,
+    StoreModule.forRoot<IAppState>({
+      user: loggedInUserReducer
+    }, {}),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
@@ -27,4 +32,4 @@ import { EffectsModule } from '@ngrx/effects';
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
