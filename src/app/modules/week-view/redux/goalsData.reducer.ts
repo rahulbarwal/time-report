@@ -1,4 +1,3 @@
-import { getAllLifecycleHooks } from '@angular/compiler/src/lifecycle_reflector';
 import { createReducer, on } from '@ngrx/store';
 import { DateTimeService } from '../services/date-time/date-time.service';
 import {
@@ -7,12 +6,12 @@ import {
   loadMonthInfoToFromDBAction,
   saveMonthInfoToDBFailAction,
   saveMonthInfoToDBSuccessAction,
-  updateCurrentWeekStartDateAction,
+  updateCurrentWeekStartDateAction
 } from './goalsData.action';
 import {
   IGoalDataState,
   IMonthInfo,
-  IMonthInfoState,
+  IMonthInfoState
 } from './goalsData.state';
 
 const initialState: IGoalDataState = {
@@ -20,7 +19,7 @@ const initialState: IGoalDataState = {
   dataLoading: false,
   saveError: null,
   dataSaved: null,
-  currentWeekSundayDate: DateTimeService.lastSunday.getDate(),
+  currentWeekSundayDate: null,
 };
 
 export const goalsDataReducer = createReducer(
@@ -79,7 +78,7 @@ function addMonthInfoReducer(
       perDayData = new Array(DateTimeService.getDaysInMonth());
     }
     perDayData.splice(
-      store.currentWeekSundayDate - 1,
+      (store.currentWeekSundayDate as number) - 1,
       goal.perDayData.length,
       ...goal.perDayData
     );
@@ -88,9 +87,9 @@ function addMonthInfoReducer(
   if (monthsMap.has(monthName) && monthsMap.get(monthName) !== null) {
     newData.weeksAvailable = monthsMap.get(monthName)?.weeksAvailable || [];
 
-    newData.weeksAvailable.push(store.currentWeekSundayDate);
+    newData.weeksAvailable.push((store.currentWeekSundayDate as number));
   } else {
-    newData.weeksAvailable = [store.currentWeekSundayDate];
+    newData.weeksAvailable = [(store.currentWeekSundayDate as number)];
   }
   monthsMap.set(monthName, newData);
 

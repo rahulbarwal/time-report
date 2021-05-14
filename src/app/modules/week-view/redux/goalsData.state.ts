@@ -23,7 +23,7 @@ interface IGoalDataState {
   dataLoading: boolean;
   saveError: string | null;
   dataSaved: boolean | null;
-  currentWeekSundayDate: number;
+  currentWeekSundayDate: number | null;
 }
 
 const getGoalDataSelector = createFeatureSelector<IGoalDataState>(

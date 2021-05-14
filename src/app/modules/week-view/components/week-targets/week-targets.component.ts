@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
@@ -35,27 +36,29 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   disableNext?: boolean;
   isAnyDataAvailableForCurrentMonth?: boolean;
   constructor(
-    private store: Store<IGoalDataState>,
-    private _targetDB: TargetsDbService
+    private _store: Store<IGoalDataState>,
+    private _targetDB: TargetsDbService,
+    private _router: Router,
+    private _activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.monthInfo$ = this.store.select(getMonthsMapSelector).pipe(
+    this.monthInfo$ = this._store.select(getMonthsMapSelector).pipe(
       map((months) => {
         const monthData = months.get(this.currentMonth);
         this.isAnyDataAvailableForCurrentMonth = !(monthData === null);
         return monthData;
       })
     );
-    this.loading$ = this.store.select(getDataLoadingSelector);
-    this.currentWeekSubscription = this.store
+    this.loading$ = this._store.select(getDataLoadingSelector);
+    this.currentWeekSubscription = this._store
       .select(getCurrentSundaySelector)
       .pipe(filter((val) => !!val),
         map(val => {
           this.currentWeekStartDate = val as number;
           this.updateComponentDateVars();
         }))
-      .subscribe((val) => {
+      .subscribe(_ => {
         this.monthInfo$.pipe(
           take(1)
         ).subscribe((monthData) => {
@@ -64,6 +67,15 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
           }
         });
       });
+    this.getStartWeekDateFromRoute();
+  }
+
+  getStartWeekDateFromRoute() {
+    let startWeekDate = this._activatedRoute.snapshot.queryParams.startWeekDate;
+    if (!startWeekDate) {
+      startWeekDate = DateTimeService.lastSunday.getDate();
+    }
+    this.dispatchUpdateCurrentWeekDate(parseInt(startWeekDate));
   }
 
   ngOnDestroy() {
@@ -85,7 +97,7 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   }
 
   dispatchLoadMonthInfo(setLoading = true) {
-    this.store.dispatch(
+    this._store.dispatch(
       loadMonthInfoToFromDBAction({
         year: DateTimeService.currentYear,
         month: this.currentMonth,
@@ -130,13 +142,19 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   }
 
   changeWeeksData(next = true) {
-    this.dispatchUpdateCurrentWeekDate(
-      next ? this.currentWeekStartDate + 7 : this.currentWeekStartDate - 7
-    );
+    const newStartDate = next ? this.currentWeekStartDate + 7 : this.currentWeekStartDate - 7;
+    this.dispatchUpdateCurrentWeekDate(newStartDate);
+    this.updateRouteParam(newStartDate);
+  }
+
+  updateRouteParam(weekStartDate: number) {
+    this._router.navigate([], {
+      queryParams: { startWeekDate: weekStartDate },
+    })
   }
 
   private dispatchUpdateCurrentWeekDate(currentWeekStartDate: number) {
-    this.store.dispatch(
+    this._store.dispatch(
       updateCurrentWeekStartDateAction({
         currentWeekStartDate,
       })

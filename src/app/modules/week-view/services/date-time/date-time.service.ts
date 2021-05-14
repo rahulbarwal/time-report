@@ -65,8 +65,12 @@ export class DateTimeService {
     return days[date.getDay()];
   }
 
+  static constructCurrentMonthDateFromDateNum(date: number): Date {
+    return new Date((new Date()).setDate(date));
+  }
+
   static getCurrentWeeksDayFromDateNum(date: number) {
-    return DateTimeService.getWeekDayNameFromDate(new Date((new Date()).setDate(date)));
+    return this.getWeekDayNameFromDate(this.constructCurrentMonthDateFromDateNum(date));
   }
 
   static getMonthNameDate(date: Date): string {
