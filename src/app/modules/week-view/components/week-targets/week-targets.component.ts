@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import {
   loadMonthInfoToFromDBAction,
   updateCurrentWeekStartDateAction,
@@ -33,6 +33,7 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   currentWeekSubscription!: Subscription;
   disablePrev?: boolean;
   disableNext?: boolean;
+  isAnyDataAvailableForCurrentMonth?: boolean;
   constructor(
     private store: Store<IGoalDataState>,
     private _targetDB: TargetsDbService
@@ -41,19 +42,26 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.monthInfo$ = this.store.select(getMonthsMapSelector).pipe(
       map((months) => {
-        return months.get(this.currentMonth);
+        const monthData = months.get(this.currentMonth);
+        this.isAnyDataAvailableForCurrentMonth = !(monthData === null);
+        return monthData;
       })
     );
     this.loading$ = this.store.select(getDataLoadingSelector);
     this.currentWeekSubscription = this.store
       .select(getCurrentSundaySelector)
-      .pipe(filter((val) => !!val))
+      .pipe(filter((val) => !!val),
+        map(val => {
+          this.currentWeekStartDate = val as number;
+          this.updateComponentDateVars();
+        }))
       .subscribe((val) => {
-        this.currentWeekStartDate = val as number;
-        this.updateComponentDateVars();
-        this.monthInfo$.subscribe((monthData) => {
-          if (!monthData?.weeksAvailable.includes(this.currentWeekStartDate)) {
-            this.dispatchLoadMonthInfo(true, this.currentWeekStartDate);
+        this.monthInfo$.pipe(
+          take(1)
+        ).subscribe((monthData) => {
+          if (!(this.isAnyDataAvailableForCurrentMonth && monthData?.weeksAvailable.includes(this.currentWeekStartDate))) {
+            console.log("🚀 ~ this.monthInfo$.subscribe ~ this.currentWeekStartDate", this.currentWeekStartDate)
+            this.dispatchLoadMonthInfo(true);
           }
         });
       });
@@ -77,7 +85,7 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
     this.disablePrev = DateTimeService.isFirstWeek(this.weekDates[0])
   }
 
-  dispatchLoadMonthInfo(setLoading = true, currentWeekSunday?: number) {
+  dispatchLoadMonthInfo(setLoading = true) {
     this.store.dispatch(
       loadMonthInfoToFromDBAction({
         year: DateTimeService.currentYear,

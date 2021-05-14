@@ -1,7 +1,7 @@
 <section class="text-gray-600 body-font">
   <div class="container px-5 py-10 mx-auto">
-    <ng-container *ngIf="!(loading$ | async); else loadingTemplate">
-      <ng-container *ngIf="monthInfo$ | async as info; else emptyTemplate">
+    <ng-container *ngIf="isAnyDataAvailableForCurrentMonth; else emptyTemplate">
+      <ng-container *ngIf="monthInfo$ | async as info; else loadingTemplate">
         <div
           class="
             lg:w-2/3
@@ -25,40 +25,42 @@
           >
             {{ info.mottoOfMonth }}
           </h1>
-          <article class="p-2 my-5 flex justify-between bg-gray-50 rounded">
-            <button
-              class="btn-primary disabled:opacity-25"
-              (click)="loadPrevWeek()"
-              [disabled]="disablePrev"
-            >
-              Prev
-            </button>
-            <span class="font-semibold">
-              Current: {{ weekDates[0] }} {{ currentMonth | slice: 0:3 }} -
-              {{ weekDates[weekDates.length - 1] }}
-              {{ currentMonth | slice: 0:3 }}
-              <a
-                class="text-xs underline cursor-pointer text-indigo-500"
-                (click)="jumpToToday()"
+          <ng-container *ngIf="!(loading$ | async); else loadingTemplate">
+            <article class="p-2 my-5 flex justify-between bg-gray-50 rounded">
+              <button
+                class="btn-primary disabled:opacity-25"
+                (click)="loadPrevWeek()"
+                [disabled]="disablePrev"
               >
-                Today
-              </a>
-            </span>
-            <button
-              class="btn-primary disabled:opacity-25"
-              (click)="loadNextWeek()"
-              [disabled]="disableNext"
-            >
-              Next
-            </button>
-          </article>
-          <app-targets-table
-            [currentWeek]="weekDates"
-            [goalsData]="info.goals"
-            [headings]="weekTitles"
-            [currentDayIndex]="currentDayIndex"
-            (setHoursForGoal)="setHoursForGoal($event)"
-          ></app-targets-table>
+                Prev
+              </button>
+              <span class="font-semibold">
+                Current: {{ weekDates[0] }} {{ currentMonth | slice: 0:3 }} -
+                {{ weekDates[weekDates.length - 1] }}
+                {{ currentMonth | slice: 0:3 }}
+                <a
+                  class="text-xs underline cursor-pointer text-indigo-500"
+                  (click)="jumpToToday()"
+                >
+                  Today
+                </a>
+              </span>
+              <button
+                class="btn-primary disabled:opacity-25"
+                (click)="loadNextWeek()"
+                [disabled]="disableNext"
+              >
+                Next
+              </button>
+            </article>
+            <app-targets-table
+              [currentWeek]="weekDates"
+              [goalsData]="info.goals"
+              [headings]="weekTitles"
+              [currentDayIndex]="currentDayIndex"
+              (setHoursForGoal)="setHoursForGoal($event)"
+            ></app-targets-table>
+          </ng-container>
         </div>
       </ng-container>
     </ng-container>
