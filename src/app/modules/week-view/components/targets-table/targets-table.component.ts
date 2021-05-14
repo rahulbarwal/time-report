@@ -70,7 +70,7 @@ export class TargetsTableComponent {
         }
       }
     }
-    return '';
+    return 'text-gray-400';
   }
 
   hoursClick(goalID: string, hrs: number, dayIndex: number, hrIndex: number) {

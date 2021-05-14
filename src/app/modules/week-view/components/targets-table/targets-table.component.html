@@ -2,7 +2,17 @@
   <thead>
     <tr>
       <th
-        class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl text-center"
+        class="
+          px-4
+          py-3
+          title-font
+          tracking-wider
+          font-medium
+          text-gray-900 text-sm
+          bg-gray-100
+          rounded-tl rounded-bl
+          text-center
+        "
         *ngFor="let title of headings"
       >
         {{ title }}
@@ -32,7 +42,7 @@
             hrs: hrs,
             goal: goal,
             index: index,
-            prevHr: goal.perDayData[index - 1] || null
+            prevHr: goal.perDayData[index + (currentWeek[0] - 1) - 1]
           }"
         >
         </ng-container>
@@ -43,7 +53,7 @@
 
 <ng-template #benchmarkedHrsTemplate let-noHrs="hrs" let-prevDayHrs="prevHr">
   <span
-    class="text-gray-400 font-bold"
+    class="text-xl font-bold"
     [ngClass]="getHrColorClass(noHrs, prevDayHrs)"
   >
     <ng-component
@@ -60,7 +70,15 @@
 <ng-template #loadingTemplate>
   <span class="flex items-center h-5 w-5">
     <span
-      class="animate-ping inline-flex h-full w-full rounded-full bg-indigo-300 opacity-75"
+      class="
+        animate-ping
+        inline-flex
+        h-full
+        w-full
+        rounded-full
+        bg-indigo-300
+        opacity-75
+      "
     ></span>
   </span>
 </ng-template>
@@ -74,7 +92,18 @@
   <div class="flex">
     <span
       *ngFor="let hr of allowedHours; let hrIndex = index"
-      class="flex h-8 items-center justify-center rounded-full text-center w-8 mr-1 cursor-pointer shadow"
+      class="
+        flex
+        h-8
+        items-center
+        justify-center
+        rounded-full
+        text-center
+        w-8
+        mr-1
+        cursor-pointer
+        shadow
+      "
       [ngClass]="
         hrs === hr ? 'bg-indigo-300 text-white' : 'bg-gray-200 text-gray-700'
       "
