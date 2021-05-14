@@ -7,6 +7,7 @@ const initialState: ILoggedInUserInfo = {
     email: '',
     phone: '',
     photoUrl: '',
+    id: ''
 }
 export const loggedInUserReducer = createReducer(
     initialState,
@@ -17,13 +18,14 @@ export const loggedInUserReducer = createReducer(
 function updateUserInfo(
     store: ILoggedInUserInfo,
     {
-        email, phone, name, photoUrl
+        email, phone, name, photoUrl, id
     }: {
         name: string,
         email: string,
         phone: string,
         photoUrl: string,
+        id: string,
     }
 ): ILoggedInUserInfo {
-    return { ...store, email, phone, name, photoUrl };
+    return { ...store, email, phone, name, photoUrl, id };
 }

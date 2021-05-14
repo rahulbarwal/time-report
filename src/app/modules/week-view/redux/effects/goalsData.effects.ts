@@ -12,7 +12,7 @@ import {
   saveMonthInfoToDBFailAction,
   saveMonthInfoToDBSuccessAction,
 } from '../actions/goalsData.action';
-import { IGoalDataState } from '../state/goalsData.state';
+import { IGoalDataState, IMonthInfo } from '../state/goalsData.state';
 
 @Injectable()
 export class GoalsDataEffects {
@@ -20,7 +20,7 @@ export class GoalsDataEffects {
     private _targetsDB: TargetsDbService,
     private _actions$: Actions,
     private _store: Store<IGoalDataState>
-  ) {}
+  ) { }
 
   @Effect()
   loadMonthData$ = this._actions$.pipe(
@@ -33,7 +33,7 @@ export class GoalsDataEffects {
           weekStartDate: action.weekStartDate,
         })
         .pipe(
-          concatMap((info) =>
+          concatMap((info: IMonthInfo) =>
             of(
               addMonthInfoToStoreAction({
                 monthName: action.month as string,

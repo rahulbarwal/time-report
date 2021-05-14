@@ -4,7 +4,14 @@ import { AngularFirestore } from '@angular/fire/firestore';
   providedIn: 'root',
 })
 export class FirestoreService {
-  constructor(private _firestore: AngularFirestore) {}
+  get fireStoreInstance() {
+    return this._firestore.firestore;
+  }
+  get batchInstance() {
+    return this._firestore.firestore.batch();
+  }
+
+  constructor(private _firestore: AngularFirestore) { }
 
   getCollectionRef(path: string) {
     if (path === null) {
@@ -13,7 +20,4 @@ export class FirestoreService {
     return this._firestore.collection(path);
   }
 
-  get writeBatch() {
-    return this._firestore.firestore.batch();
-  }
 }

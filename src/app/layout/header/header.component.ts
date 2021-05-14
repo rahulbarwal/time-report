@@ -1,10 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Store } from '@ngrx/store';
 import * as firebase from 'firebase/app';
 import { Observable } from 'rxjs';
 import { IAppState, ILoggedInUserInfo, userInfoSelector } from 'src/app/redux/state/app.state';
-import { updateUserInfoAction } from 'src/app/redux/user/user.actions';
+import { saveLoggedInUserInfoToDBAction } from 'src/app/redux/user/user.actions';
 
 @Component({
   selector: 'app-header',
@@ -32,22 +32,23 @@ export class HeaderComponent implements OnInit {
   }
 
   dipatchLoggedInUser(userInfo: firebase.default.User | null) {
+    let info = {
+      name: '',
+      email: '',
+      phone: '',
+      photoUrl: '',
+      id: '',
+    };
     if (userInfo) {
-      this._store.dispatch(updateUserInfoAction({
+      info = {
         name: userInfo.displayName || '',
         email: userInfo.email || '',
         phone: userInfo.phoneNumber || '',
         photoUrl: userInfo.photoURL || '',
-      }));
-    } else {
-      this._store.dispatch(updateUserInfoAction({
-        name: '',
-        email: '',
-        phone: '',
-        photoUrl: '',
-      }));
-
+        id: userInfo.uid || '',
+      };
     }
+    this._store.dispatch(saveLoggedInUserInfoToDBAction(info));
   }
 
   monitorAuthStateChanges() {

@@ -12,6 +12,7 @@ import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { loggedInUserReducer } from './redux/user/user.reducer';
+import { UserEffects } from './redux/user/user.effects';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent],
@@ -27,7 +28,7 @@ import { loggedInUserReducer } from './redux/user/user.reducer';
       maxAge: 25,
       logOnly: environment.production,
     }),
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot([UserEffects]),
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -75,7 +75,7 @@ export class TargetsDbService {
 
             weekDates?.forEach(async (day) => {
               if (day !== null) {
-                const found = perDayData.hasOwnProperty(day);
+                const found = perDayData?.hasOwnProperty(day);
                 if (found) {
                   goal.perDayData?.push(perDayData[day]);
                 } else {
@@ -132,7 +132,7 @@ export class TargetsDbService {
       const targetRef = this._firestore
         .getCollectionRef(`${this.getYearPath(year)}`)
         .doc(monthName).ref;
-      const batch = this._firestore.writeBatch;
+      const batch = this._firestore.batchInstance;
       batch.set(targetRef, { mottoOfMonth: motto });
 
       goals.forEach((goal) => {
