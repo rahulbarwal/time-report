@@ -3,17 +3,33 @@
     <ng-container *ngIf="!(loading$ | async); else loadingTemplate">
       <ng-container *ngIf="monthInfo$ | async as info; else emptyTemplate">
         <div
-          class="lg:w-2/3 mx-auto overflow-auto flex flex-col text-center w-full mb-20"
+          class="
+            lg:w-2/3
+            mx-auto
+            overflow-auto
+            flex flex-col
+            text-center
+            w-full
+            mb-20
+          "
         >
           <h1
-            class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900"
+            class="
+              sm:text-4xl
+              text-3xl
+              font-medium
+              title-font
+              mb-2
+              text-gray-900
+            "
           >
             {{ info.mottoOfMonth }}
           </h1>
           <article class="p-2 my-5 flex justify-between bg-gray-50 rounded">
             <button
-              class="btn-primary disabled:opacity-50"
+              class="btn-primary disabled:opacity-25"
               (click)="loadPrevWeek()"
+              [disabled]="disablePrev"
             >
               Prev
             </button>
@@ -29,8 +45,9 @@
               </a>
             </span>
             <button
-              class="btn-primary disabled:opacity-50"
+              class="btn-primary disabled:opacity-25"
               (click)="loadNextWeek()"
+              [disabled]="disableNext"
             >
               Next
             </button>

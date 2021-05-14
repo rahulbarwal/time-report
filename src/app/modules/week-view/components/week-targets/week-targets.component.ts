@@ -31,10 +31,12 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   currentDayIndex!: number;
   currentWeekStartDate!: number;
   currentWeekSubscription!: Subscription;
+  disablePrev?: boolean;
+  disableNext?: boolean;
   constructor(
     private store: Store<IGoalDataState>,
     private _targetDB: TargetsDbService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.monthInfo$ = this.store.select(getMonthsMapSelector).pipe(
@@ -70,6 +72,9 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
     this.currentDayIndex = this.weekDates.findIndex(
       (date) => date === DateTimeService.today.getDate()
     );
+
+    this.disableNext = DateTimeService.isLastWeek(this.weekDates[this.weekDates.length - 1])
+    this.disablePrev = DateTimeService.isFirstWeek(this.weekDates[0])
   }
 
   dispatchLoadMonthInfo(setLoading = true, currentWeekSunday?: number) {

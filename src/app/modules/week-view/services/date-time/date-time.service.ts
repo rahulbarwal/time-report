@@ -15,17 +15,27 @@ export class DateTimeService {
       0
     ).getDate();
 
+  static isFirstWeek(weekStartDate: number) {
+    return weekStartDate === 1;
+  }
+
+  static isLastWeek(weekEndDate: number) {
+    return weekEndDate === DateTimeService.getDaysInMonth();
+  }
+
   static getValidWeekDaysList(sundayDate: number): number[] {
     sundayDate = sundayDate;
     const maxDate = DateTimeService.getDaysInMonth();
+    const minDate = 1;
+    const isInRange = (curDate: number) => minDate <= curDate && curDate <= maxDate;
     const week: number[] = [
-      sundayDate,
-      sundayDate + 1 <= maxDate ? sundayDate + 1 : null,
-      sundayDate + 2 <= maxDate ? sundayDate + 2 : null,
-      sundayDate + 3 <= maxDate ? sundayDate + 3 : null,
-      sundayDate + 4 <= maxDate ? sundayDate + 4 : null,
-      sundayDate + 5 <= maxDate ? sundayDate + 5 : null,
-      sundayDate + 6 <= maxDate ? sundayDate + 6 : null,
+      isInRange(sundayDate) ? sundayDate : null,
+      isInRange(sundayDate + 1) ? sundayDate + 1 : null,
+      isInRange(sundayDate + 2) ? sundayDate + 2 : null,
+      isInRange(sundayDate + 3) ? sundayDate + 3 : null,
+      isInRange(sundayDate + 4) ? sundayDate + 4 : null,
+      isInRange(sundayDate + 5) ? sundayDate + 5 : null,
+      isInRange(sundayDate + 6) ? sundayDate + 6 : null,
     ].filter((val) => val !== null) as number[];
     return week;
   }
