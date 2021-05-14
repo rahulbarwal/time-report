@@ -5,7 +5,7 @@ import { filter, map, take } from 'rxjs/operators';
 import {
   loadMonthInfoToFromDBAction,
   updateCurrentWeekStartDateAction,
-} from '../../redux/actions/goalsData.action';
+} from '../../redux/goalsData.action';
 import {
   getCurrentSundaySelector,
   getDataLoadingSelector,
@@ -13,7 +13,7 @@ import {
   IGoalDataState,
   IMonthInfo,
   IMonthInfoState,
-} from '../../redux/state/goalsData.state';
+} from '../../redux/goalsData.state';
 import { DateTimeService } from '../../services/date-time/date-time.service';
 import { TargetsDbService } from '../../services/targets-db/targets-db.service';
 
@@ -60,7 +60,6 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
           take(1)
         ).subscribe((monthData) => {
           if (!(this.isAnyDataAvailableForCurrentMonth && monthData?.weeksAvailable.includes(this.currentWeekStartDate))) {
-            console.log("🚀 ~ this.monthInfo$.subscribe ~ this.currentWeekStartDate", this.currentWeekStartDate)
             this.dispatchLoadMonthInfo(true);
           }
         });

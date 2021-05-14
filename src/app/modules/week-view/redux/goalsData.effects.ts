@@ -3,7 +3,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of, throwError } from 'rxjs';
 import { catchError, concatMap, switchMap } from 'rxjs/operators';
-import { TargetsDbService } from '../../services/targets-db/targets-db.service';
+import { TargetsDbService } from '../services/targets-db/targets-db.service';
 import {
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
@@ -11,8 +11,8 @@ import {
   saveMonthInfoToDBAction,
   saveMonthInfoToDBFailAction,
   saveMonthInfoToDBSuccessAction,
-} from '../actions/goalsData.action';
-import { IGoalDataState, IMonthInfo } from '../state/goalsData.state';
+} from './goalsData.action';
+import { IGoalDataState, IMonthInfo } from './goalsData.state';
 
 @Injectable()
 export class GoalsDataEffects {

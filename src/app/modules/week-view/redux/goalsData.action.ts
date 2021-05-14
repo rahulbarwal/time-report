@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { IMonthInfo } from '../state/goalsData.state';
+import { IMonthInfo } from './goalsData.state';
 
 const updateCurrentWeekStartDateAction = createAction(
   '[MonthInfo] Update Current week start date',

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
-import { IGoalInfo, IMonthInfo } from '../../redux/state/goalsData.state';
+import { IGoalInfo, IMonthInfo } from '../../redux/goalsData.state';
 import { DateTimeService } from '../date-time/date-time.service';
 
 @Injectable()

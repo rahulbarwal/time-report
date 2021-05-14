@@ -10,11 +10,11 @@ import { TargetsDbService } from './services/targets-db/targets-db.service';
 import {
   GOALS_DATA_FEATURE_KEY,
   IGoalDataState,
-} from './redux/state/goalsData.state';
+} from './redux/goalsData.state';
 import { StoreModule } from '@ngrx/store';
-import { goalsDataReducer } from './redux/reducer/goalsData.reducer';
+import { goalsDataReducer } from './redux/goalsData.reducer';
 import { EffectsModule } from '@ngrx/effects';
-import { GoalsDataEffects } from './redux/effects/goalsData.effects';
+import { GoalsDataEffects } from './redux/goalsData.effects';
 import { MonthGoalsComponent } from './components/month-goals/month-goals.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GoalsListComponent } from './components/month-goals/goals-list/goals-list.component';

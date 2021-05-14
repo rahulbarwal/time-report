@@ -6,7 +6,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { IGoalInfo } from '../../redux/state/goalsData.state';
+import { IGoalInfo } from '../../redux/goalsData.state';
 
 @Component({
   selector: 'app-targets-table',

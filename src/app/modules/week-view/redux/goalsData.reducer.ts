@@ -1,6 +1,6 @@
 import { getAllLifecycleHooks } from '@angular/compiler/src/lifecycle_reflector';
 import { createReducer, on } from '@ngrx/store';
-import { DateTimeService } from '../../services/date-time/date-time.service';
+import { DateTimeService } from '../services/date-time/date-time.service';
 import {
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
@@ -8,12 +8,12 @@ import {
   saveMonthInfoToDBFailAction,
   saveMonthInfoToDBSuccessAction,
   updateCurrentWeekStartDateAction,
-} from '../actions/goalsData.action';
+} from './goalsData.action';
 import {
   IGoalDataState,
   IMonthInfo,
   IMonthInfoState,
-} from '../state/goalsData.state';
+} from './goalsData.state';
 
 const initialState: IGoalDataState = {
   months: new Map<string, IMonthInfoState>(),

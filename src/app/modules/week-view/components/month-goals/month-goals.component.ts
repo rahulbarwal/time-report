@@ -3,12 +3,12 @@ import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
-import { saveMonthInfoToDBAction } from '../../redux/actions/goalsData.action';
+import { saveMonthInfoToDBAction } from '../../redux/goalsData.action';
 import {
   getSaveErrorSelector,
   getSavedSelector,
   IGoalDataState,
-} from '../../redux/state/goalsData.state';
+} from '../../redux/goalsData.state';
 import { DateTimeService } from '../../services/date-time/date-time.service';
 
 @Component({
