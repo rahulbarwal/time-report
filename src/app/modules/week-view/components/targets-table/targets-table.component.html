@@ -1,4 +1,4 @@
-<table class="table-auto w-full text-left whitespace-no-wrap">
+<table class="table-auto text-left whitespace-no-wrap">
   <thead>
     <tr>
       <th
@@ -12,6 +12,7 @@
           bg-gray-100
           rounded-tl rounded-bl
           text-center
+          max-w-prose
         "
         *ngFor="let title of headings"
       >
@@ -21,7 +22,7 @@
   </thead>
   <tbody>
     <tr *ngFor="let goal of goalsData" class="border-b border-gray-100">
-      <td class="px-4 py-3 italic bg-gray-100">{{ goal.title }}</td>
+      <td class="px-4 py-3 italic bg-gray-100 max-w-prose">{{ goal.title }}</td>
       <td
         class="px-4 py-3 text-center"
         *ngFor="

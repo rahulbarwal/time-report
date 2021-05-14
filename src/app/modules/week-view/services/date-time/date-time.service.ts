@@ -65,6 +65,10 @@ export class DateTimeService {
     return days[date.getDay()];
   }
 
+  static getCurrentWeeksDayFromDateNum(date: number) {
+    return DateTimeService.getWeekDayNameFromDate(new Date((new Date()).setDate(date)));
+  }
+
   static getMonthNameDate(date: Date): string {
     var months = [
       'January',

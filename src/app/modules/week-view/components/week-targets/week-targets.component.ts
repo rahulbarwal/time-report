@@ -96,10 +96,9 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   }
 
   initializeWeekTitles(): string[] {
-    const monthShort = this.currentMonth.substring(0, 3);
     return [
       'Goals',
-      ...this.weekDates.map((date) => (date ? `${date} ${monthShort}` : '')),
+      ...this.weekDates.map((date) => (date ? `${DateTimeService.getCurrentWeeksDayFromDateNum(date).substring(0, 3)} ${date}` : '')),
     ];
   }
 
