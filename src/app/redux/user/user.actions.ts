@@ -1,17 +1,23 @@
 import { createAction, props } from "@ngrx/store";
-import { ILoggedInUserInfo } from "../state/app.state";
+import { ELoginState, ILoggedInUserInfo, ILoggedInUserInfoState } from "../state/app.state";
 
-const updateUserInfoAction = createAction(
+const updateUserInfoStateAction = createAction(
     '[UserInfo] Update logged in user information',
-    props<ILoggedInUserInfo>()
+    props<ILoggedInUserInfoState>()
 );
 
 const saveLoggedInUserInfoToDBAction = createAction(
     '[UserInfo] Save user info to DB',
-    props<ILoggedInUserInfo>()
+    props<ILoggedInUserInfoState>()
+);
+
+const setUserVerifiedForSessionAction = createAction(
+    '[UserInfo] Set session verification info to DB',
+    props<{isUserVerifiedForThisSession: ELoginState}>()
 );
 
 export {
-    updateUserInfoAction,
-    saveLoggedInUserInfoToDBAction
+    updateUserInfoStateAction,
+    saveLoggedInUserInfoToDBAction,
+    setUserVerifiedForSessionAction
 }

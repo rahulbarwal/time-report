@@ -1,31 +1,33 @@
 import { createReducer, on } from "@ngrx/store";
-import { ILoggedInUserInfo } from "../state/app.state";
-import { updateUserInfoAction } from "./user.actions";
+import { ELoginState, ILoggedInUserInfo, ILoggedInUserInfoState } from "../state/app.state";
+import { updateUserInfoStateAction, setUserVerifiedForSessionAction } from "./user.actions";
 
-const initialState: ILoggedInUserInfo = {
+const initialState: ILoggedInUserInfoState = {
     name: '',
     email: '',
     phone: '',
     photoUrl: '',
-    id: ''
+    id: '',
+    isUserVerifiedForThisSession: ELoginState.WAITING
 }
 export const loggedInUserReducer = createReducer(
     initialState,
-    on(updateUserInfoAction, updateUserInfo)
+    on(updateUserInfoStateAction, updateUserInfo),
+    on(setUserVerifiedForSessionAction, setUserVerified),
 );
 
 
 function updateUserInfo(
-    store: ILoggedInUserInfo,
-    {
-        email, phone, name, photoUrl, id
-    }: {
-        name: string,
-        email: string,
-        phone: string,
-        photoUrl: string,
-        id: string,
-    }
-): ILoggedInUserInfo {
-    return { ...store, email, phone, name, photoUrl, id };
+    store: ILoggedInUserInfoState,
+    payload: ILoggedInUserInfoState
+): ILoggedInUserInfoState {
+    return {
+        ...store,
+        ...payload
+    };
+}
+
+function setUserVerified(store: ILoggedInUserInfoState,
+    { isUserVerifiedForThisSession }: { isUserVerifiedForThisSession: ELoginState }): ILoggedInUserInfoState {
+    return { ...store, isUserVerifiedForThisSession };
 }

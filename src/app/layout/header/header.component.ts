@@ -3,7 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Store } from '@ngrx/store';
 import * as firebase from 'firebase/app';
 import { Observable } from 'rxjs';
-import { IAppState, ILoggedInUserInfo, userInfoSelector } from 'src/app/redux/state/app.state';
+import { ELoginState, IAppState, ILoggedInUserInfo, ILoggedInUserInfoState, userInfoSelector } from 'src/app/redux/state/app.state';
 import { saveLoggedInUserInfoToDBAction } from 'src/app/redux/user/user.actions';
 
 @Component({
@@ -27,26 +27,19 @@ export class HeaderComponent implements OnInit {
   checkIfAlreadyLoggedIn() {
     const userInfo = localStorage.getItem('user');
     if (userInfo) {
-      this.userState = JSON.parse(userInfo);
+      this.userState = JSON.parse(userInfo) as firebase.default.User;
+      this.dipatchLoggedInUser(this.userState, ELoginState.WAITING);
     }
   }
 
-  dipatchLoggedInUser(userInfo: firebase.default.User | null) {
-    let info = {
-      name: '',
-      email: '',
-      phone: '',
-      photoUrl: '',
-      id: '',
-    };
-    if (userInfo) {
-      info = {
-        name: userInfo.displayName || '',
-        email: userInfo.email || '',
-        phone: userInfo.phoneNumber || '',
-        photoUrl: userInfo.photoURL || '',
-        id: userInfo.uid || '',
-      };
+  dipatchLoggedInUser(userInfo: firebase.default.User | null, loginState: ELoginState) {
+    const info: ILoggedInUserInfoState = {
+      name: userInfo?.displayName || '',
+      email: userInfo?.email || '',
+      phone: userInfo?.phoneNumber || '',
+      photoUrl: userInfo?.photoURL || '',
+      id: userInfo?.uid || '',
+      isUserVerifiedForThisSession: loginState
     }
     this._store.dispatch(saveLoggedInUserInfoToDBAction(info));
   }
@@ -60,7 +53,8 @@ export class HeaderComponent implements OnInit {
         this.userState = null;
         localStorage.removeItem('user');
       }
-      this.dipatchLoggedInUser(this.userState);
+      const loginState = !!this.userState ? ELoginState.LOGGEDIN : ELoginState.LOGGGEDOUT;
+      this.dipatchLoggedInUser(this.userState, loginState);
     })
   }
 

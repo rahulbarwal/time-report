@@ -5,10 +5,21 @@ interface ILoggedInUserInfo {
     phone: string;
     photoUrl: string;
 }
+
+enum ELoginState {
+    WAITING,
+    LOGGEDIN,
+    LOGGGEDOUT
+}
+
+interface ILoggedInUserInfoState extends ILoggedInUserInfo {
+    isUserVerifiedForThisSession: ELoginState;
+}
 interface IAppState {
-    user: ILoggedInUserInfo
+    user: ILoggedInUserInfoState
 }
 
 const userInfoSelector = (state: IAppState) => state.user;
+const sessionVerifiedSelector = (state: IAppState) => state.user.isUserVerifiedForThisSession;
 
-export { IAppState, ILoggedInUserInfo, userInfoSelector };
+export { IAppState, ILoggedInUserInfo, ILoggedInUserInfoState, ELoginState, userInfoSelector, sessionVerifiedSelector };

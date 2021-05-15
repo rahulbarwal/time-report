@@ -4,7 +4,7 @@ import { of } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { UsersDbService } from "src/app/modules/week-view/services/users-db/users-db.service";
 import { ILoggedInUserInfo } from "../state/app.state";
-import { saveLoggedInUserInfoToDBAction, updateUserInfoAction } from "./user.actions";
+import { saveLoggedInUserInfoToDBAction, updateUserInfoStateAction } from "./user.actions";
 
 @Injectable()
 export class UserEffects {
@@ -23,13 +23,17 @@ export class UserEffects {
                 phone: action.phone,
                 photoUrl: action.photoUrl
             };
+            const toState = {
+                ...toDB,
+                isUserVerifiedForThisSession: action.isUserVerifiedForThisSession
+            }
             if (action.id) {
                 return this._userDB
                     .addUpdateUserLoggedInInfo(toDB)
-                    .pipe(map(_ => toDB))
+                    .pipe(map(_ => toState))
             }
-            return of(toDB)
+            return of(toState)
         }),
-        map(userInfo => updateUserInfoAction(userInfo))
+        map(userInfo => updateUserInfoStateAction(userInfo))
     );
 }
