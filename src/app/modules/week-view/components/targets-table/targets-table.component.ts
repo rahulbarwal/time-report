@@ -49,24 +49,24 @@ export class TargetsTableComponent {
       if (diff > 0) {
         switch (diff) {
           case 1:
-            return 'text-green-300';
-          case 2:
-            return 'text-green-400';
-          case 3:
-            return 'text-green-500';
-          case 4:
             return 'text-green-600';
+          case 2:
+            return 'text-green-700';
+          case 3:
+            return 'text-green-800';
+          case 4:
+            return 'text-green-900';
         }
       } else {
         switch (Math.abs(diff)) {
           case 1:
-            return 'text-yellow-400';
+            return 'text-yellow-600';
           case 2:
-            return 'text-red-400';
+            return 'text-red-700';
           case 3:
-            return 'text-red-500';
+            return 'text-red-800';
           case 4:
-            return 'text-red-600';
+            return 'text-red-900';
         }
       }
     }

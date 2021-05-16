@@ -21,10 +21,10 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let goal of goalsData" class="border-b border-gray-100">
+    <tr *ngFor="let goal of goalsData" class="border-b border-gray-100 bg-pink-100">
       <td class="px-4 py-3 italic bg-gray-100 max-w-prose">{{ goal.title }}</td>
       <td
-        class="px-4 py-3 text-center"
+        class="px-4 py-3 text-center shadow-xl"
         *ngFor="
           let hrs of goal.perDayData.slice(
             currentWeek[0] - 1,
