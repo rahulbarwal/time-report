@@ -12,7 +12,7 @@ import {
   loadWeekDataToFromDBAction,
   saveMonthInfoToDBAction,
   saveMonthInfoToDBFailAction,
-  saveMonthInfoToDBSuccessAction,
+  saveMonthInfoToDBSuccessAction
 } from './goalsData.action';
 import { IMonthInfo } from './goalsData.state';
 
@@ -33,27 +33,27 @@ export class GoalsDataEffects {
         take(1),
         switchMap(
           user => this._targetsDB
-        .getMonthGoalsData({
+            .getMonthGoalsData({
               userId: user.id,
-          year: action.year,
-          monthName: action.month,
-          weekStartDate: action.weekStartDate,
+              year: action.year,
+              monthName: action.month,
+              weekStartDate: action.weekStartDate,
             }).pipe(switchMap((info: IMonthInfo) =>
-            of(
-              addMonthInfoToStoreAction({
-                monthName: action.month as string,
-                data: info,
+              of(
+                addMonthInfoToStoreAction({
+                  monthName: action.month as string,
+                  data: info,
                 }))
             ), catchError(
               e => {
-            if (e === 'EmptyMonth') {
-              return of(
-                emptyMonthInfoAction({ monthName: action.month as string })
-              );
-            }
-            return throwError(e);
-          })
-        )
+                if (e === 'EmptyMonth') {
+                  return of(
+                    emptyMonthInfoAction({ monthName: action.month as string })
+                  );
+                }
+                return throwError(e);
+              })
+            )
         ))
     )
   );
@@ -62,18 +62,26 @@ export class GoalsDataEffects {
   saveMonthToDB$ = this._actions$.pipe(
     ofType(saveMonthInfoToDBAction),
     switchMap((action) => this._store.select(userInfoSelector)
-        .pipe(
+      .pipe(
         filter(val => !!val),
         take(1),
         switchMap(
           user => {
-          catchError((e) => {
-            if (e === 'SaveFail') {
-              return of(saveMonthInfoToDBFailAction());
-            }
-            return throwError(e);
-          })
-        )
-    )
+            const year = DateTimeService.currentYear;
+            const monthName = DateTimeService.currentMonthName;
+
+            return this._targetsDB
+              .saveMonthGoals({ year, monthName, userId: user.id, motto: action.motto, goals: action.goals })
+              .pipe(
+                concatMap((_) => of(saveMonthInfoToDBSuccessAction({ monthName }))),
+                catchError((e) => {
+                  if (e === 'SaveFail') {
+                    return of(saveMonthInfoToDBFailAction({ monthName }));
+                  }
+                  return throwError(e);
+                })
+              )
+          }
+        )))
   );
 }

@@ -116,6 +116,10 @@ function addEmptyMonthInfoToStore(
 }
 
 function monthInfoSaveFail(store: IGoalDataState): IGoalDataState {
+  const monthsMapFromStore = new Map<string, IMonthInfoState | null>(
+    JSON.parse(JSON.stringify(Array.from(store.months)))
+  );
+  monthsMapFromStore.set('May', null);
   return {
     ...store,
     saveError: 'Failed to save month info',
@@ -124,8 +128,14 @@ function monthInfoSaveFail(store: IGoalDataState): IGoalDataState {
 }
 
 function monthInfoSaveSuccess(store: IGoalDataState): IGoalDataState {
+  const monthsMapFromStore = new Map<string, IMonthInfoState | undefined>(
+    JSON.parse(JSON.stringify(Array.from(store.months)))
+  );
+  monthsMapFromStore.set('May', undefined);
+
   return {
     ...store,
+    months: monthsMapFromStore,
     saveError: '',
     dataSaved: true,
   };

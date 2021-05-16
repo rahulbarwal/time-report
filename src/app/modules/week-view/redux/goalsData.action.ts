@@ -39,11 +39,13 @@ const saveMonthInfoToDBAction = createAction(
 );
 
 const saveMonthInfoToDBFailAction = createAction(
-  '[MonthInfo] Save to DB failed'
+  '[MonthInfo] Save to DB failed',
+  props<{ monthName: string }>()
 );
 
 const saveMonthInfoToDBSuccessAction = createAction(
-  '[MonthInfo] Save to DB successfull'
+  '[MonthInfo] Save to DB successfull',
+  props<{ monthName: string }>()
 );
 
 export {
