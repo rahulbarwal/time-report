@@ -7,27 +7,29 @@ import { DateTimeService } from '../date-time/date-time.service';
 
 @Injectable()
 export class TargetsDbService {
-  getYearPath(year: number) {
-    return `targets-${year}`;
+  getUserTargetsPath(year: number, userId: string) {
+    return `targets-${year}/${userId}/yearlyData`;
   }
 
-  constructor(private _firestore: FirestoreService) {}
+  constructor(private _firestore: FirestoreService) { }
 
-  isMonthGoalsStored(year?: number, monthName?: string) {
+  isMonthGoalsStored(userId: string, year?: number, monthName?: string) {
     year = year || DateTimeService.currentYear;
     monthName = monthName || DateTimeService.currentMonthName;
     return this._firestore
-      .getCollectionRef(this.getYearPath(year))
+      .getCollectionRef(this.getUserTargetsPath(year, userId))
       .doc(monthName)
       .get()
       .pipe(map((val) => val.exists));
   }
 
   getMonthGoalsData({
+    userId,
     year,
     monthName,
     weekStartDate,
   }: {
+    userId: string
     year?: number;
     monthName?: string;
     weekStartDate: number;
@@ -35,7 +37,7 @@ export class TargetsDbService {
     year = year || DateTimeService.currentYear;
     monthName = monthName || DateTimeService.currentMonthName;
     const weekDates = DateTimeService.getValidWeekDaysList(weekStartDate);
-    const yearPath = this.getYearPath(year);
+    const yearPath = this.getUserTargetsPath(year, userId);
 
     let monthInfo: IMonthInfo;
     return this._firestore
@@ -94,12 +96,14 @@ export class TargetsDbService {
   updateGoalHours({
     year,
     monthName,
+    userId,
     goalID,
     day,
     hrs,
   }: {
     year?: number;
     monthName?: string;
+    userId: string;
     goalID: string;
     day: number;
     hrs: number;
@@ -109,7 +113,7 @@ export class TargetsDbService {
     const objToUpdate: { [key: string]: number } = {};
     objToUpdate[`perDayData.${day}`] = hrs;
     return this._firestore
-      .getCollectionRef(`${this.getYearPath(year)}/${monthName}/goals`)
+      .getCollectionRef(`${this.getUserTargetsPath(year, userId)}/${monthName}/goals`)
       .doc(goalID)
       .update(objToUpdate);
   }
@@ -118,19 +122,19 @@ export class TargetsDbService {
   saveMonthGoals({
     year,
     monthName,
+    userId,
     motto,
     goals,
   }: {
-    year?: number;
-    monthName?: string;
+    year: number;
+    monthName: string;
+    userId: string;
     motto: string;
     goals: string[];
   }) {
-    year = year || DateTimeService.currentYear;
-    monthName = monthName || DateTimeService.currentMonthName;
     try {
       const targetRef = this._firestore
-        .getCollectionRef(`${this.getYearPath(year)}`)
+        .getCollectionRef(`${this.getUserTargetsPath(year, userId)}`)
         .doc(monthName).ref;
       const batch = this._firestore.batchInstance;
       batch.set(targetRef, { mottoOfMonth: motto });

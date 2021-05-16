@@ -6,7 +6,7 @@ import { DateTimeService } from '../../services/date-time/date-time.service';
 @Injectable({
   providedIn: 'root'
 })
-export class WeekTargetsGuard implements CanActivate {
+export class WeekTargetStartWeekDateGuard implements CanActivate {
 
   constructor(private _router: Router) { }
 

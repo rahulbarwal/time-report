@@ -19,7 +19,13 @@ interface IMonthInfoState extends IMonthInfo {
 }
 
 interface IGoalDataState {
-  months: Map<string, IMonthInfoState | null>;
+  /**
+   * months state
+   * 1. IMonthInfoState: actual data
+   * 2. undefined: we do not know yet, it can be there or not
+   * 3. null: not found in DB, user needs to create it
+   */
+  months: Map<string, IMonthInfoState | null | undefined>;
   dataLoading: boolean;
   saveError: string | null;
   dataSaved: boolean | null;
@@ -33,6 +39,13 @@ const getGoalDataSelector = createFeatureSelector<IGoalDataState>(
 const getMonthsMapSelector = createSelector(
   getGoalDataSelector,
   (state) => state.months
+);
+
+const getSpecificMonthsDataSelector = createSelector(
+  getMonthsMapSelector,
+  (months: Map<string, IMonthInfoState | null | undefined>, props: { monthName: string }) => {
+    return months.get(props.monthName);
+  }
 );
 
 const getDataLoadingSelector = createSelector(
@@ -67,4 +80,5 @@ export {
   getSaveErrorSelector,
   getSavedSelector,
   getCurrentSundaySelector,
+  getSpecificMonthsDataSelector
 };

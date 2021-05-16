@@ -8,8 +8,8 @@ const updateCurrentWeekStartDateAction = createAction(
   }>()
 );
 
-const loadMonthInfoToFromDBAction = createAction(
-  '[MonthInfo] Load month data from DB',
+const loadWeekDataToFromDBAction = createAction(
+  '[MonthInfo] Load week data from DB',
   props<{
     year?: number;
     month?: string;
@@ -48,7 +48,7 @@ const saveMonthInfoToDBSuccessAction = createAction(
 
 export {
   updateCurrentWeekStartDateAction,
-  loadMonthInfoToFromDBAction,
+  loadWeekDataToFromDBAction,
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
   updateGoalHrsForTodayAction,

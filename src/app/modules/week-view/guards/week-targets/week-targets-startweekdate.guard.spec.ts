@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { WeekTargetsGuard } from './week-targets.guard';
+import { WeekTargetStartWeekDateGuard } from './week-targets-startweekdate.guard';
 
 describe('WeekTargetsGuard', () => {
-  let guard: WeekTargetsGuard;
+  let guard: WeekTargetStartWeekDateGuard;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    guard = TestBed.inject(WeekTargetsGuard);
+    guard = TestBed.inject(WeekTargetStartWeekDateGuard);
   });
 
   it('should be created', () => {

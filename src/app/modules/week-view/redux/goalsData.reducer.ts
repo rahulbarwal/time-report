@@ -3,7 +3,7 @@ import { DateTimeService } from '../services/date-time/date-time.service';
 import {
   addMonthInfoToStoreAction,
   emptyMonthInfoAction,
-  loadMonthInfoToFromDBAction,
+  loadWeekDataToFromDBAction,
   saveMonthInfoToDBFailAction,
   saveMonthInfoToDBSuccessAction,
   updateCurrentWeekStartDateAction
@@ -15,7 +15,7 @@ import {
 } from './goalsData.state';
 
 const initialState: IGoalDataState = {
-  months: new Map<string, IMonthInfoState>(),
+  months: new Map(),
   dataLoading: false,
   saveError: null,
   dataSaved: null,
@@ -25,7 +25,7 @@ const initialState: IGoalDataState = {
 export const goalsDataReducer = createReducer(
   initialState,
   on(updateCurrentWeekStartDateAction, updateCurrentWeekStartDate),
-  on(loadMonthInfoToFromDBAction, setLoading),
+  on(loadWeekDataToFromDBAction, setLoading),
   on(addMonthInfoToStoreAction, addMonthInfoReducer),
   on(emptyMonthInfoAction, addEmptyMonthInfoToStore),
   on(saveMonthInfoToDBSuccessAction, monthInfoSaveSuccess),
@@ -63,14 +63,14 @@ function addMonthInfoReducer(
   store: IGoalDataState,
   { monthName, data }: { monthName: string; data: IMonthInfo }
 ): IGoalDataState {
-  const monthsMap = new Map<string, IMonthInfoState>(
+  const monthsMapFromStore = new Map<string, IMonthInfoState>(
     JSON.parse(JSON.stringify(Array.from(store.months)))
   );
   const newData: IMonthInfoState = JSON.parse(JSON.stringify(data));
   newData.goals.forEach((goal) => {
     let perDayData;
-    if (monthsMap.has(monthName) && monthsMap.get(monthName) !== null) {
-      const existingData = monthsMap
+    if (monthsMapFromStore.has(monthName) && monthsMapFromStore.get(monthName) !== null) {
+      const existingData = monthsMapFromStore
         .get(monthName)
         ?.goals.find((g) => g.id === goal.id);
       perDayData = existingData?.perDayData || [];
@@ -84,18 +84,18 @@ function addMonthInfoReducer(
     );
     goal.perDayData = perDayData;
   });
-  if (monthsMap.has(monthName) && monthsMap.get(monthName) !== null) {
-    newData.weeksAvailable = monthsMap.get(monthName)?.weeksAvailable || [];
+  if (monthsMapFromStore.has(monthName) && monthsMapFromStore.get(monthName) !== null) {
+    newData.weeksAvailable = monthsMapFromStore.get(monthName)?.weeksAvailable || [];
 
     newData.weeksAvailable.push((store.currentWeekSundayDate as number));
   } else {
     newData.weeksAvailable = [(store.currentWeekSundayDate as number)];
   }
-  monthsMap.set(monthName, newData);
+  monthsMapFromStore.set(monthName, newData);
 
   return {
     ...store,
-    months: monthsMap,
+    months: monthsMapFromStore,
     dataLoading: false,
   };
 }

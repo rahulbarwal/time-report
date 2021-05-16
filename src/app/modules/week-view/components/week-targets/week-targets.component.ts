@@ -1,16 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import { filter, map, switchMap, take, takeWhile } from 'rxjs/operators';
+import { IAppState, userInfoSelector } from 'src/app/redux/state/app.state';
 import {
-  loadMonthInfoToFromDBAction,
+  loadWeekDataToFromDBAction,
   updateCurrentWeekStartDateAction,
 } from '../../redux/goalsData.action';
 import {
   getCurrentSundaySelector,
   getDataLoadingSelector,
   getMonthsMapSelector,
+  getSpecificMonthsDataSelector,
   IGoalDataState,
   IMonthInfo,
   IMonthInfoState,
@@ -26,7 +28,7 @@ import { TargetsDbService } from '../../services/targets-db/targets-db.service';
 export class WeekTargetsComponent implements OnInit, OnDestroy {
   loading$!: Observable<boolean>;
   monthInfo$!: Observable<IMonthInfoState | null | undefined>;
-  currentMonth!: string;
+  currentMonth = DateTimeService.currentMonthName;
   weekTitles!: string[];
   weekDates!: number[];
   currentDayIndex!: number;
@@ -36,21 +38,23 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   disableNext?: boolean;
   isAnyDataAvailableForCurrentMonth?: boolean;
   constructor(
-    private _store: Store<IGoalDataState>,
+    private _store: Store<IAppState>,
     private _targetDB: TargetsDbService,
     private _router: Router,
     private _activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.monthInfo$ = this._store.select(getMonthsMapSelector).pipe(
-      map((months) => {
-        const monthData = months.get(this.currentMonth);
-        this.isAnyDataAvailableForCurrentMonth = !(monthData === null);
-        return monthData;
-      })
-    );
+    this.getStartWeekDateFromRoute();
+
     this.loading$ = this._store.select(getDataLoadingSelector);
+    this.monthInfo$ = this._store
+      .pipe(
+        select(getSpecificMonthsDataSelector, { monthName: this.currentMonth }),
+        map((monthData) => {
+          this.isAnyDataAvailableForCurrentMonth = monthData !== null;
+          return monthData;
+        }));
     this.currentWeekSubscription = this._store
       .select(getCurrentSundaySelector)
       .pipe(filter((val) => !!val),
@@ -63,11 +67,11 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
           take(1)
         ).subscribe((monthData) => {
           if (!(this.isAnyDataAvailableForCurrentMonth && monthData?.weeksAvailable.includes(this.currentWeekStartDate))) {
-            this.dispatchLoadMonthInfo(true);
+            this.dispatchLoadWeekData(true);
           }
         });
       });
-    this.getStartWeekDateFromRoute();
+
   }
 
   getStartWeekDateFromRoute() {
@@ -83,7 +87,6 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
   }
 
   updateComponentDateVars() {
-    this.currentMonth = DateTimeService.currentMonthName;
     this.weekDates = DateTimeService.getValidWeekDaysList(
       this.currentWeekStartDate
     );
@@ -96,9 +99,9 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
     this.disablePrev = DateTimeService.isFirstWeek(this.weekDates[0])
   }
 
-  dispatchLoadMonthInfo(setLoading = true) {
+  dispatchLoadWeekData(setLoading = true) {
     this._store.dispatch(
-      loadMonthInfoToFromDBAction({
+      loadWeekDataToFromDBAction({
         year: DateTimeService.currentYear,
         month: this.currentMonth,
         loading: setLoading,
@@ -123,14 +126,20 @@ export class WeekTargetsComponent implements OnInit, OnDestroy {
     dayIndex: number;
     hrs: number;
   }) {
-    await this._targetDB.updateGoalHours({
-      year: DateTimeService.currentYear,
-      monthName: DateTimeService.currentMonthName,
-      day: this.weekDates[dayIndex] as number,
-      goalID,
-      hrs,
-    });
-    this.dispatchLoadMonthInfo(false);
+    return this._store.select(userInfoSelector)
+      .pipe(take(1))
+      .subscribe(async info => {
+        await this._targetDB.updateGoalHours({
+          userId: info.id,
+          year: DateTimeService.currentYear,
+          monthName: DateTimeService.currentMonthName,
+          day: this.weekDates[dayIndex] as number,
+          goalID,
+          hrs,
+        });
+        this.dispatchLoadWeekData(false);
+      }
+      );
   }
 
   loadPrevWeek() {
