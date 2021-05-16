@@ -44,7 +44,6 @@ export class MonthGoalsComponent implements OnInit, OnDestroy {
     this.saveError$ = this._store.select(getSaveErrorSelector);
     this.dataSaved = this._store.select(getSavedSelector).subscribe((val) => {
       if (val) {
-        this._router.navigateByUrl('/month-info/week-targets');
         this._router.navigate(['../week-targets'], {
           relativeTo: this._activatedRoute,
         });

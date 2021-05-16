@@ -22,4 +22,11 @@ interface IAppState {
 const userInfoSelector = (state: IAppState) => state.user;
 const sessionVerifiedSelector = (state: IAppState) => state.user.isUserVerifiedForThisSession;
 
-export { IAppState, ILoggedInUserInfo, ILoggedInUserInfoState, ELoginState, userInfoSelector, sessionVerifiedSelector };
+export {
+    IAppState,
+    ILoggedInUserInfo,
+    ILoggedInUserInfoState,
+    ELoginState,
+    userInfoSelector,
+    sessionVerifiedSelector
+};
