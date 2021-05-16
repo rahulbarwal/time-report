@@ -11,10 +11,10 @@ export class GoalsListComponent {
   @Input() goalsFormArray!: FormArray;
   newGoal = new FormControl('');
 
-  constructor(private _formBuilder: FormBuilder) {}
+  constructor(private _formBuilder: FormBuilder) { }
 
   onKeyPress(e: KeyboardEvent) {
-    if (e.code === 'Enter') {
+    if (e.code === 'Enter' && !!this.newGoal.value) {
       this.addNewGoal();
     }
   }
